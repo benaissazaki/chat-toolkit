@@ -51,26 +51,30 @@ def get_lyrics(query):
     return cleaned_lyrics
 
 
-if __name__ == '__main__':
+def listen_lyrics():
+    ''' Main infinite loop '''
     while True:
         keyboard.wait('alt + 5')
         keyboard.press_and_release('backspace')
         print('Magic key pressed')
-        recorded = keyboard.record(until='enter')
-        SONG_NAME = ''
-        for e in recorded:
-            if e.event_type == keyboard.KEY_DOWN:
-                if e.name == 'space':
-                    SONG_NAME += ' '
-                elif e.name == 'backspace':
-                    SONG_NAME = SONG_NAME[:-1]
-                elif e.name not in ['enter', 'esc']:
-                    SONG_NAME += e.name
+        keystrokes = keyboard.record(until='enter')
+        song_name = ''
+        for keystroke in keystrokes:
+            if keystroke.event_type == keyboard.KEY_DOWN:
+                if keystroke.name == 'space':
+                    song_name += ' '
+                elif keystroke.name == 'backspace':
+                    song_name = song_name[:-1]
+                elif keystroke.name not in ['enter', 'esc']:
+                    song_name += keystroke.name
 
-        print(f"-Searching for song: {SONG_NAME}")
-        lyrics = get_lyrics(SONG_NAME).split('\n')
+        print(f"-Searching for song: {song_name}")
+        lyrics = get_lyrics(song_name).split('\n')
 
-        for l in lyrics:
-            keyboard.write(l)
+        for line in lyrics:
+            keyboard.write(line)
             keyboard.press_and_release('enter')
             sleep(0.4)
+
+if __name__ == '__main__':
+    listen_lyrics()

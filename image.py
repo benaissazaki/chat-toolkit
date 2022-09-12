@@ -40,25 +40,29 @@ def save_image(link: str) -> str:
     return os.path.join('output', 'audio', f'tmp_pic.{extension}')
 
 
-if __name__ == '__main__':
+def listen_image():
+    ''' Main infinite loop '''
     while True:
         keyboard.wait('alt + 4')
         keyboard.press_and_release('backspace')
         print('Magic key pressed')
-        recorded = keyboard.record(until='enter')
-        IMAGE_NAME = ''
-        for e in recorded:
-            if e.event_type == keyboard.KEY_DOWN:
-                if e.name == 'space':
-                    IMAGE_NAME += ' '
-                elif e.name == 'backspace':
-                    IMAGE_NAME = IMAGE_NAME[:-1]
-                elif e.name not in ['enter', 'esc']:
-                    IMAGE_NAME += e.name
+        keystrokes = keyboard.record(until='enter')
+        image_name = ''
+        for keystroke in keystrokes:
+            if keystroke.event_type == keyboard.KEY_DOWN:
+                if keystroke.name == 'space':
+                    image_name += ' '
+                elif keystroke.name == 'backspace':
+                    image_name = image_name[:-1]
+                elif keystroke.name not in ['enter', 'esc']:
+                    image_name += keystroke.name
 
-        print(f"Searching for image: {IMAGE_NAME}")
-        filename = save_image(get_image_link(IMAGE_NAME))
+        print(f"Searching for image: {image_name}")
+        filename = save_image(get_image_link(image_name))
         copy_file(filename)
         keyboard.press_and_release('ctrl + v')
         sleep(1)
         keyboard.press('enter')
+
+if __name__ == '__main__':
+    listen_image()
