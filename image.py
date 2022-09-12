@@ -7,7 +7,7 @@ import keyboard
 from helpers import copy_file, keystrokes_to_string
 
 def get_image_link(query: str) -> str:
-    ''' Searches for @query and returns the url of the first result '''
+    ''' Searches for @query with Websearch API and returns the url of the first result '''
 
     url = "https://contextualwebsearch-websearch-v1.p.rapidapi.com/api/Search/ImageSearchAPI"
 
@@ -18,7 +18,11 @@ def get_image_link(query: str) -> str:
         "X-RapidAPI-Host": "contextualwebsearch-websearch-v1.p.rapidapi.com"
     }
 
-    response = requests.get(url, headers=headers, params=querystring, timeout=1000).json()
+    try:
+        response = requests.get(url, headers=headers, params=querystring, timeout=2).json()
+    except requests.exceptions.RequestException:
+        print('Cannot access the Websearch API')
+        return None
     link = response['value'][0]['url']
     return link
 
@@ -27,7 +31,10 @@ def save_image(link: str) -> str:
 
     extension = 'jpg'
     with open(os.path.join('output', 'images', f'tmp_pic.{extension}'), 'wb') as handle:
-        response = requests.get(link, stream=True, timeout=2)
+        try:
+            response = requests.get(link, stream=True, timeout=2)
+        except requests.exceptions.RequestException:
+            print('Cannot download image')
 
         if not response.ok:
             print(response)
