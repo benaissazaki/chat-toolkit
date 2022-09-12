@@ -1,10 +1,14 @@
+''' Downloads image then copy-pastes it '''
+
+import os
 from time import sleep
 import requests
 import keyboard
-import os
-from helpers import copy_file
+from helpers import copy_file, keystrokes_to_string
 
-def get_image_link(query):
+def get_image_link(query: str) -> str:
+    ''' Searches for @query and returns the url of the first result '''
+
     url = "https://contextualwebsearch-websearch-v1.p.rapidapi.com/api/Search/ImageSearchAPI"
 
     querystring = {"q":query,"pageNumber":"1","pageSize":"10","autoCorrect":"true"}
@@ -14,15 +18,16 @@ def get_image_link(query):
         "X-RapidAPI-Host": "contextualwebsearch-websearch-v1.p.rapidapi.com"
     }
 
-    response = requests.get(url, headers=headers, params=querystring).json()
+    response = requests.get(url, headers=headers, params=querystring, timeout=1000).json()
     link = response['value'][0]['url']
-    
     return link
 
-def save_image(link: str):
+def save_image(link: str) -> str:
+    ''' Downloads the image from @link and returns its filepath '''
+
     extension = 'jpg'
-    with open(os.path.join('output', 'audio', f'tmp_pic.{extension}'), 'wb') as handle:
-        response = requests.get(link, stream=True)
+    with open(os.path.join('output', 'images', f'tmp_pic.{extension}'), 'wb') as handle:
+        response = requests.get(link, stream=True, timeout=1000)
 
         if not response.ok:
             print(response)
@@ -32,28 +37,26 @@ def save_image(link: str):
                 break
 
             handle.write(block)
-    return os.path.join('output', 'audio', f'tmp_pic.{extension}')
+    return os.path.join('output', 'images', f'tmp_pic.{extension}')
 
-if __name__ == '__main__':
+
+def listen_image(hotkey: str = 'alt + 4'):
+    ''' Main infinite loop '''
+
     while True:
-        keyboard.wait('alt + 4')
+        keyboard.wait(hotkey)
         keyboard.press_and_release('backspace')
-        print('Magic key pressed')
-        recorded = keyboard.record(until='enter')
-        image_name = ''
-        for e in recorded:
-            if e.event_type == keyboard.KEY_DOWN:
-                if e.name == 'space':
-                    image_name += ' '
-                elif e.name == 'backspace':
-                    image_name = image_name[:-1]
-                elif e.name not in ['enter', 'esc']:
-                    image_name += e.name
-        
+
+        print('Reading image name...')
+        keystrokes = keyboard.record(until='enter')
+        image_name = keystrokes_to_string(keystrokes)
+
         print(f"Searching for image: {image_name}")
+
         filename = save_image(get_image_link(image_name))
         copy_file(filename)
         keyboard.press_and_release('ctrl + v')
         sleep(1)
-        keyboard.press('enter')
-        
+
+if __name__ == '__main__':
+    listen_image()
