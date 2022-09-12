@@ -27,7 +27,7 @@ def save_image(link: str) -> str:
 
     extension = 'jpg'
     with open(os.path.join('output', 'images', f'tmp_pic.{extension}'), 'wb') as handle:
-        response = requests.get(link, stream=True, timeout=1000)
+        response = requests.get(link, stream=True, timeout=2)
 
         if not response.ok:
             print(response)

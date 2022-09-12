@@ -12,7 +12,7 @@ def get_lyrics_link(query: str) -> str:
     ''' Get links to the @query song Genius lyrics page (takes first search result) '''
 
     results = list(requests.get(
-        f"https://genius.com/api/search/multi?per_page=5&q={query}", timeout=2000)
+        f"https://genius.com/api/search/multi?per_page=5&q={query}", timeout=2)
         .json()['response']['sections']
     )
 
