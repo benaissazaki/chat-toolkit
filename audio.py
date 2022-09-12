@@ -28,7 +28,7 @@ def listen_audio():
     while True:
         keyboard.wait('alt + 3')
         keyboard.press_and_release('backspace')
-        print('Magic key pressed')
+        print('Reading song title...')
         keystrokes = keyboard.record(until='enter')
         song_name = ''
         for keystroke in keystrokes:

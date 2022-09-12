@@ -56,7 +56,7 @@ def listen_lyrics():
     while True:
         keyboard.wait('alt + 5')
         keyboard.press_and_release('backspace')
-        print('Magic key pressed')
+        print('Reading song title for lyrics...')
         keystrokes = keyboard.record(until='enter')
         song_name = ''
         for keystroke in keystrokes:
@@ -68,7 +68,7 @@ def listen_lyrics():
                 elif keystroke.name not in ['enter', 'esc']:
                     song_name += keystroke.name
 
-        print(f"-Searching for song: {song_name}")
+        print(f"-Searching for song lyrics: {song_name}")
         lyrics = get_lyrics(song_name).split('\n')
 
         for line in lyrics:

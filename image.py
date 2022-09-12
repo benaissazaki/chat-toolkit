@@ -26,7 +26,7 @@ def save_image(link: str) -> str:
     ''' Downloads the image from @link and returns its filepath '''
 
     extension = 'jpg'
-    with open(os.path.join('output', 'audio', f'tmp_pic.{extension}'), 'wb') as handle:
+    with open(os.path.join('output', 'image', f'tmp_pic.{extension}'), 'wb') as handle:
         response = requests.get(link, stream=True, timeout=1000)
 
         if not response.ok:
@@ -37,7 +37,7 @@ def save_image(link: str) -> str:
                 break
 
             handle.write(block)
-    return os.path.join('output', 'audio', f'tmp_pic.{extension}')
+    return os.path.join('output', 'images', f'tmp_pic.{extension}')
 
 
 def listen_image():
@@ -45,7 +45,7 @@ def listen_image():
     while True:
         keyboard.wait('alt + 4')
         keyboard.press_and_release('backspace')
-        print('Magic key pressed')
+        print('Reading image name...')
         keystrokes = keyboard.record(until='enter')
         image_name = ''
         for keystroke in keystrokes:
