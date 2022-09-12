@@ -34,6 +34,7 @@ def save_image(link: str):
             handle.write(block)
     return os.path.join('output', 'audio', f'tmp_pic.{extension}')
 
+
 if __name__ == '__main__':
     while True:
         keyboard.wait('alt + 4')
