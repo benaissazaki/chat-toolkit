@@ -34,7 +34,7 @@ def check_internet_access():
     ''' Send get request to google to check internet access '''
 
     try:
-        requests.get('https://www.google.com', timeout=1)
+        requests.get('https://www.google.com', timeout=2)
         return True
     except requests.exceptions.RequestException:
         return False

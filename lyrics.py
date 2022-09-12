@@ -11,13 +11,18 @@ from helpers import keystrokes_to_string
 def get_lyrics_link(query: str) -> str:
     ''' Get links to the @query song Genius lyrics page (takes first search result) '''
 
-    results = list(requests.get(
-        f"https://genius.com/api/search/multi?per_page=5&q={query}", timeout=2)
-        .json()['response']['sections']
-    )
+    try:
+        results = list(requests.get(
+            f"https://genius.com/api/search/multi?per_page=5&q={query}", timeout=2)
+            .json()['response']['sections']
+        )
+
+    except requests.exceptions.RequestException:
+        print('Cannot search lyrics from genius.com')
+        return None
 
     for result in results:
-        if result['type'] == 'song':
+        if result['type'] == 'song' and len(result['hits']) > 0:
             for hit in result['hits']:
                 if hit['type'] == 'song':
                     return hit['result']['url']
@@ -25,14 +30,27 @@ def get_lyrics_link(query: str) -> str:
     return None
 
 
-def get_lyrics(query):
+def get_lyrics(query: str):
     ''' Get lyrics to @query song '''
 
     link = get_lyrics_link(query)
-    page = requests.get(link, timeout=2000).text.replace('<i>', '').replace(
-        '</i>', '').replace('<b>', '').replace('</b>', '')
+    if link is None:
+        return None
+
+    try:
+        page = requests.get(link, timeout=2).text.replace('<i>', '').replace(
+            '</i>', '').replace('<b>', '').replace('</b>', '')
+
+    except requests.exceptions.RequestException:
+        print(f'Cannot get lyrics page {link}')
+        return None
+
     soup = BeautifulSoup(page, 'html.parser')
+
     raw_lyrics = soup.findAll('div', {'data-lyrics-container': 'true'})
+    if len(raw_lyrics) == 0:
+        print('Cannot parse lyrics page')
+        return None
     raw_lyrics = "".join([s.get_text('\n') for s in raw_lyrics])
 
     cleaned_lyrics = ''
