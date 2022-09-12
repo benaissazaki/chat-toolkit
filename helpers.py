@@ -1,5 +1,6 @@
 ''' Helper functions common to multiple modules '''
 
+import os
 import subprocess
 from typing import List
 import keyboard
@@ -7,8 +8,8 @@ import keyboard
 
 def copy_file(file: str):
     ''' Copy file to clipboard (Windows only) '''
-
-    cmd = f"Set-Clipboard -path {file}"
+    abs_filename = os.path.abspath(file)
+    cmd = f"Set-Clipboard -path {abs_filename}"
     subprocess.run(["powershell", "-command", cmd],
                    shell=True, check=True)  # windows specific
 

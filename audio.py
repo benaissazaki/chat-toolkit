@@ -25,10 +25,11 @@ def download_audio(query):
                os.path.join('output', 'audio', 'tmp.mp3'))
 
 
-def listen_audio():
+def listen_audio(hotkey: str = 'alt + 3'):
     ''' Main infinite loop '''
+
     while True:
-        keyboard.wait('alt + 3')
+        keyboard.wait(hotkey)
         keyboard.press_and_release('backspace')
 
         print('Reading song title...')

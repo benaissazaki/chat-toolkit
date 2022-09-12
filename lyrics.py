@@ -53,16 +53,17 @@ def get_lyrics(query):
     return cleaned_lyrics
 
 
-def listen_lyrics():
+def listen_lyrics(hotkey: str = 'alt + 5'):
     ''' Main infinite loop '''
+
     while True:
-        keyboard.wait('alt + 5')
+        keyboard.wait(hotkey)
         keyboard.press_and_release('backspace')
 
         print('Reading song title for lyrics...')
         keystrokes = keyboard.record(until='enter')
         song_name = keystrokes_to_string(keystrokes)
-        
+
         print(f"-Searching for song lyrics: {song_name}")
         lyrics = get_lyrics(song_name).split('\n')
 
