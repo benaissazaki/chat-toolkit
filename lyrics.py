@@ -5,6 +5,8 @@ import keyboard
 from bs4 import BeautifulSoup
 import requests
 
+from helpers import keystrokes_to_string
+
 
 def get_lyrics_link(query: str) -> str:
     ''' Get links to the @query song Genius lyrics page (takes first search result) '''
@@ -56,18 +58,11 @@ def listen_lyrics():
     while True:
         keyboard.wait('alt + 5')
         keyboard.press_and_release('backspace')
+
         print('Reading song title for lyrics...')
         keystrokes = keyboard.record(until='enter')
-        song_name = ''
-        for keystroke in keystrokes:
-            if keystroke.event_type == keyboard.KEY_DOWN:
-                if keystroke.name == 'space':
-                    song_name += ' '
-                elif keystroke.name == 'backspace':
-                    song_name = song_name[:-1]
-                elif keystroke.name not in ['enter', 'esc']:
-                    song_name += keystroke.name
-
+        song_name = keystrokes_to_string(keystrokes)
+        
         print(f"-Searching for song lyrics: {song_name}")
         lyrics = get_lyrics(song_name).split('\n')
 

@@ -6,6 +6,8 @@ import keyboard
 import pytube
 import moviepy.editor as mp
 
+from helpers import keystrokes_to_string
+
 
 def mp4_to_mp3(filename, output_path):
     ''' Convert mp4 video to mp3 audio '''
@@ -28,17 +30,10 @@ def listen_audio():
     while True:
         keyboard.wait('alt + 3')
         keyboard.press_and_release('backspace')
+
         print('Reading song title...')
         keystrokes = keyboard.record(until='enter')
-        song_name = ''
-        for keystroke in keystrokes:
-            if keystroke.event_type == keyboard.KEY_DOWN:
-                if keystroke.name == 'space':
-                    song_name += ' '
-                elif keystroke.name == 'backspace':
-                    song_name = song_name[:-1]
-                elif keystroke.name not in ['enter', 'esc', 'maj', 'ctrl']:
-                    song_name += keystroke.name
+        song_name = keystrokes_to_string(keystrokes)
 
         print(f"Searching for song: {song_name}")
         download_audio(song_name)

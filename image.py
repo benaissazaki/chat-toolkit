@@ -4,7 +4,7 @@ import os
 from time import sleep
 import requests
 import keyboard
-from helpers import copy_file
+from helpers import copy_file, keystrokes_to_string
 
 def get_image_link(query: str) -> str:
     ''' Searches for @query and returns the url of the first result '''
@@ -42,27 +42,21 @@ def save_image(link: str) -> str:
 
 def listen_image():
     ''' Main infinite loop '''
+
     while True:
         keyboard.wait('alt + 4')
         keyboard.press_and_release('backspace')
+
         print('Reading image name...')
         keystrokes = keyboard.record(until='enter')
-        image_name = ''
-        for keystroke in keystrokes:
-            if keystroke.event_type == keyboard.KEY_DOWN:
-                if keystroke.name == 'space':
-                    image_name += ' '
-                elif keystroke.name == 'backspace':
-                    image_name = image_name[:-1]
-                elif keystroke.name not in ['enter', 'esc']:
-                    image_name += keystroke.name
+        image_name = keystrokes_to_string(keystrokes)
 
         print(f"Searching for image: {image_name}")
+
         filename = save_image(get_image_link(image_name))
         copy_file(filename)
         keyboard.press_and_release('ctrl + v')
         sleep(1)
-        keyboard.press('enter')
 
 if __name__ == '__main__':
     listen_image()
