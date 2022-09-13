@@ -1,7 +1,6 @@
 ''' Downloads image then copy-pastes it '''
 
 import os
-from time import sleep
 import requests
 import keyboard
 from helpers import copy_file, keystrokes_to_string
@@ -73,9 +72,10 @@ def listen_image(hotkey: str = 'alt + 4'):
                 continue
 
             print(f'{image_name} image found')
-            copy_file(filename)
+
+            if not copy_file(filename):
+                continue
             keyboard.press_and_release('ctrl + v')
-            sleep(1)
         except Exception as exception:                                                  # pylint: disable=broad-except
             print(f'Unidentified error in listen_image: {type(exception).__name__}')
             print(exception)

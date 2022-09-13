@@ -11,9 +11,13 @@ def copy_file(file: str):
 
     abs_filename = os.path.abspath(file)
     cmd = f"Set-Clipboard -path {abs_filename}"
-    subprocess.run(["powershell", "-command", cmd],
+    try:
+        subprocess.run(["powershell", "-command", cmd],
                    shell=True, check=True)  # windows specific
-
+        return True
+    except subprocess.CalledProcessError:
+        print(f'Cannot copy file {file} to clipboard')
+        return False
 
 def keystrokes_to_string(keystrokes: List[keyboard.KeyboardEvent]) -> str:
     ''' Convert keystrokes to a string '''
