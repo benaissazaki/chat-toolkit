@@ -31,7 +31,5 @@ if __name__ == '__main__':
     print(f'Press {AUDIO_HOTKEY} to search and send a song')
     print(f'Press {LYRICS_HOTKEY} to search and send a song\'s lyrics')
 
-    print('\nAll systems are running.\n')
-
-    print(f'Press {EXIT_HOTKEY} to exit')
+    print(f'\nAll systems are running.\nPress {EXIT_HOTKEY} to exit')
     keyboard.wait(EXIT_HOTKEY)
