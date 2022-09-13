@@ -17,6 +17,8 @@ if __name__ == '__main__':
     AUDIO_HOTKEY = 'alt + 3'
     LYRICS_HOTKEY = 'alt + 5'
 
+    EXIT_HOTKEY = 'alt + *'
+
     image_thread = Thread(target=listen_image, args=[IMAGE_HOTKEY], daemon=True)
     audio_thread = Thread(target=listen_audio, args=[AUDIO_HOTKEY], daemon=True)
     lyrics_thread = Thread(target=listen_lyrics, args=[LYRICS_HOTKEY], daemon=True)
@@ -31,4 +33,5 @@ if __name__ == '__main__':
 
     print('\nAll systems are running.\n')
 
-    keyboard.wait('alt + *')
+    print(f'Press {EXIT_HOTKEY} to exit')
+    keyboard.wait(EXIT_HOTKEY)
