@@ -19,7 +19,9 @@ def get_image_link(query: str) -> str:
     }
 
     try:
-        response = requests.get(url, headers=headers, params=querystring, timeout=2).json()
+        response = requests.get(url, headers=headers, params=querystring, timeout=2)
+        response.raise_for_status()
+        response = response.json()
     except requests.exceptions.RequestException:
         print('Cannot access the Websearch API')
         return None
@@ -29,15 +31,18 @@ def get_image_link(query: str) -> str:
 def save_image(link: str) -> str:
     ''' Downloads the image from @link and returns its filepath '''
 
+    if link is None:
+        print('Cannot download image')
+        return None
+
     extension = 'jpg'
     with open(os.path.join('output', 'images', f'tmp_pic.{extension}'), 'wb') as handle:
         try:
             response = requests.get(link, stream=True, timeout=2)
+            response.raise_for_status()
         except requests.exceptions.RequestException:
             print('Cannot download image')
-
-        if not response.ok:
-            print(response)
+            return None
 
         for block in response.iter_content(1024):
             if not block:
@@ -50,6 +55,7 @@ def save_image(link: str) -> str:
 def listen_image(hotkey: str = 'alt + 4'):
     ''' Main infinite loop '''
 
+    print(f'Enter \'{hotkey}\' to search for an image')
     while True:
         keyboard.wait(hotkey)
         keyboard.press_and_release('backspace')
@@ -61,6 +67,11 @@ def listen_image(hotkey: str = 'alt + 4'):
         print(f"Searching for image: {image_name}")
 
         filename = save_image(get_image_link(image_name))
+
+        if filename is None:
+            continue
+
+        print(f'{image_name} image found')
         copy_file(filename)
         keyboard.press_and_release('ctrl + v')
         sleep(1)

@@ -12,21 +12,21 @@ def get_lyrics_link(query: str) -> str:
     ''' Get links to the @query song Genius lyrics page (takes first search result) '''
 
     try:
-        results = list(requests.get(
+        response = requests.get(
             f"https://genius.com/api/search/multi?per_page=5&q={query}", timeout=2)
-            .json()['response']['sections']
-        )
 
     except requests.exceptions.RequestException:
         print('Cannot search lyrics from genius.com')
         return None
 
-    for result in results:
+    search_results = list(response.json()['response']['sections'])
+    for result in search_results:
         if result['type'] == 'song' and len(result['hits']) > 0:
             for hit in result['hits']:
                 if hit['type'] == 'song':
                     return hit['result']['url']
 
+    print('No lyrics found in genius.com')
     return None
 
 
@@ -57,6 +57,9 @@ def get_lyrics(query: str):
     delete_mode = False
 
     for character in raw_lyrics:
+        if character == '[' and len(cleaned_lyrics) !=0 and cleaned_lyrics[-1] != '\n':
+            cleaned_lyrics += '\n'
+
         if character in ['[', '(']:
             delete_mode = True
 
@@ -74,6 +77,7 @@ def get_lyrics(query: str):
 def listen_lyrics(hotkey: str = 'alt + 5'):
     ''' Main infinite loop '''
 
+    print(f'Enter \'{hotkey}\' to search for lyrics')
     while True:
         keyboard.wait(hotkey)
         keyboard.press_and_release('backspace')
@@ -82,9 +86,13 @@ def listen_lyrics(hotkey: str = 'alt + 5'):
         keystrokes = keyboard.record(until='enter')
         song_name = keystrokes_to_string(keystrokes)
 
-        print(f"-Searching for song lyrics: {song_name}")
-        lyrics = get_lyrics(song_name).split('\n')
+        print(f"Searching for song lyrics: {song_name}")
+        lyrics = get_lyrics(song_name)
 
+        if lyrics is None:
+            continue
+
+        lyrics = lyrics.split('\n')
         for line in lyrics:
             keyboard.write(line)
             keyboard.press_and_release('enter')

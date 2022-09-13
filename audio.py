@@ -29,7 +29,7 @@ def download_audio(query):
         first_result.streams.filter(type='audio')[0].download(
             output_path=os.path.join('output', 'audio'), filename='tmp.mp4')
     except pytube.exceptions.PytubeError:
-        print('Cannot access Youtube')
+        print('Cannot download song from Youtube')
         return None
 
     result = mp4_to_mp3(os.path.join('output', 'audio', 'tmp.mp4'),
@@ -41,6 +41,7 @@ def download_audio(query):
 def listen_audio(hotkey: str = 'alt + 3'):
     ''' Main infinite loop '''
 
+    print(f'Enter \'{hotkey}\' to search for a song')
     while True:
         keyboard.wait(hotkey)
         keyboard.press_and_release('backspace')
@@ -50,9 +51,13 @@ def listen_audio(hotkey: str = 'alt + 3'):
         song_name = keystrokes_to_string(keystrokes)
 
         print(f"Searching for song: {song_name}")
-        if download_audio(song_name) is not None:
-            path = os.path.abspath(os.path.join('output', 'audio', 'tmp.mp3'))
-            subprocess.Popen(f'explorer /select,"{path}"')
+        audio_filepath = download_audio(song_name)
+        if audio_filepath is not None:
+            path = os.path.abspath(audio_filepath)
+            try:
+                subprocess.check_call(f'explorer /select,"{path}"')
+            except subprocess.CalledProcessError:
+                print(f'Cannot open file explorer to {path}')
 
 if __name__ == '__main__':
     listen_audio()
