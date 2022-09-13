@@ -42,7 +42,6 @@ def download_audio(query):
 def listen_audio(hotkey: str = 'alt + 3'):
     ''' Main infinite loop '''
 
-    print(f'Enter \'{hotkey}\' to search for a song')
     while True:
         try:
             keyboard.wait(hotkey)
@@ -57,7 +56,7 @@ def listen_audio(hotkey: str = 'alt + 3'):
             if audio_filepath is not None:
                 path = os.path.abspath(audio_filepath)
                 subprocess.run(
-                    f'explorer /select, "{path}\\haha"', check=False, capture_output=True)
+                    f'explorer /select, "{path}"', check=False)
         except Exception as exception:                                                          # pylint: disable=broad-except
             print(
                 f'Unidentified error in listen_audio: {type(exception).__name__}')

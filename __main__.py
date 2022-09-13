@@ -13,13 +13,21 @@ if __name__ == '__main__':
         print('No internet connection detected, program will close.')
         sys.exit(1)
 
-    image_thread = Thread(target=listen_image, daemon=True)
-    audio_thread = Thread(target=listen_audio, daemon=True)
-    lyrics_thread = Thread(target=listen_lyrics, daemon=True)
+    IMAGE_HOTKEY = 'alt + 4'
+    AUDIO_HOTKEY = 'alt + 3'
+    LYRICS_HOTKEY = 'alt + 5'
+
+    image_thread = Thread(target=listen_image, args=[IMAGE_HOTKEY], daemon=True)
+    audio_thread = Thread(target=listen_audio, args=[AUDIO_HOTKEY], daemon=True)
+    lyrics_thread = Thread(target=listen_lyrics, args=[LYRICS_HOTKEY], daemon=True)
 
     image_thread.start()
     audio_thread.start()
     lyrics_thread.start()
+
+    print(f'Press {IMAGE_HOTKEY} to search and send an image')
+    print(f'Press {AUDIO_HOTKEY} to search and send a song')
+    print(f'Press {LYRICS_HOTKEY} to search and send a song\'s lyrics')
 
     print('\nAll systems are running.\n')
 

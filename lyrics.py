@@ -4,7 +4,6 @@ from time import sleep
 import keyboard
 from bs4 import BeautifulSoup
 import requests
-
 from helpers import keystrokes_to_string
 
 
@@ -77,7 +76,6 @@ def get_lyrics(query: str):
 def listen_lyrics(hotkey: str = 'alt + 5'):
     ''' Main infinite loop '''
 
-    print(f'Enter \'{hotkey}\' to search for lyrics')
     while True:
         try:
             keyboard.wait(hotkey)

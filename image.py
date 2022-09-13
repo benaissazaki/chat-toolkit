@@ -27,6 +27,7 @@ def get_image_link(query: str) -> str:
     link = response['value'][0]['url']
     return link
 
+
 def save_image(link: str) -> str:
     ''' Downloads the image from @link and returns its filepath '''
 
@@ -54,7 +55,6 @@ def save_image(link: str) -> str:
 def listen_image(hotkey: str = 'alt + 4'):
     ''' Main infinite loop '''
 
-    print(f'Enter \'{hotkey}\' to search for an image')
     while True:
         try:
             keyboard.wait(hotkey)
