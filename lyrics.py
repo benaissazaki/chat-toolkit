@@ -79,24 +79,28 @@ def listen_lyrics(hotkey: str = 'alt + 5'):
 
     print(f'Enter \'{hotkey}\' to search for lyrics')
     while True:
-        keyboard.wait(hotkey)
-        keyboard.press_and_release('backspace')
+        try:
+            keyboard.wait(hotkey)
+            keyboard.press_and_release('backspace')
 
-        print('Reading song title for lyrics...')
-        keystrokes = keyboard.record(until='enter')
-        song_name = keystrokes_to_string(keystrokes)
+            print('Reading song title for lyrics...')
+            keystrokes = keyboard.record(until='enter')
+            song_name = keystrokes_to_string(keystrokes)
 
-        print(f"Searching for song lyrics: {song_name}")
-        lyrics = get_lyrics(song_name)
+            print(f"Searching for song lyrics: {song_name}")
+            lyrics = get_lyrics(song_name)
 
-        if lyrics is None:
-            continue
+            if lyrics is None:
+                continue
 
-        lyrics = lyrics.split('\n')
-        for line in lyrics:
-            keyboard.write(line)
-            keyboard.press_and_release('enter')
-            sleep(0.4)
+            lyrics = lyrics.split('\n')
+            for line in lyrics:
+                keyboard.write(line)
+                keyboard.press_and_release('enter')
+                sleep(0.4)
+        except Exception as exception:                                                  # pylint: disable=broad-except
+            print(f'Unidentified error in listen_lyrics: {type(exception).__name__}')
+            print(exception)
 
 if __name__ == '__main__':
     listen_lyrics()

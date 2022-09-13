@@ -21,6 +21,6 @@ if __name__ == '__main__':
     audio_thread.start()
     lyrics_thread.start()
 
-    print('All systems are running.')
+    print('\nAll systems are running.\n')
 
     keyboard.wait('alt + *')

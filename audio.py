@@ -21,6 +21,7 @@ def mp4_to_mp3(filename, output_path):
         print('Cannot convert audio to mp3')
         return None
 
+
 def download_audio(query):
     ''' Download first video matching @query then converts it to mp3 '''
 
@@ -33,7 +34,7 @@ def download_audio(query):
         return None
 
     result = mp4_to_mp3(os.path.join('output', 'audio', 'tmp.mp4'),
-               os.path.join('output', 'audio', 'tmp.mp3'))
+                        os.path.join('output', 'audio', 'tmp.mp3'))
 
     return result
 
@@ -43,21 +44,25 @@ def listen_audio(hotkey: str = 'alt + 3'):
 
     print(f'Enter \'{hotkey}\' to search for a song')
     while True:
-        keyboard.wait(hotkey)
-        keyboard.press_and_release('backspace')
+        try:
+            keyboard.wait(hotkey)
+            keyboard.press_and_release('backspace')
 
-        print('Reading song title...')
-        keystrokes = keyboard.record(until='enter')
-        song_name = keystrokes_to_string(keystrokes)
+            print('Reading song title...')
+            keystrokes = keyboard.record(until='enter')
+            song_name = keystrokes_to_string(keystrokes)
 
-        print(f"Searching for song: {song_name}")
-        audio_filepath = download_audio(song_name)
-        if audio_filepath is not None:
-            path = os.path.abspath(audio_filepath)
-            try:
-                subprocess.check_call(f'explorer /select,"{path}"')
-            except subprocess.CalledProcessError:
-                print(f'Cannot open file explorer to {path}')
+            print(f"Searching for song: {song_name}")
+            audio_filepath = download_audio(song_name)
+            if audio_filepath is not None:
+                path = os.path.abspath(audio_filepath)
+                subprocess.run(
+                    f'explorer /select, "{path}\\haha"', check=False, capture_output=True)
+        except Exception as exception:                                                          # pylint: disable=broad-except
+            print(
+                f'Unidentified error in listen_audio: {type(exception).__name__}')
+            print(exception)
+
 
 if __name__ == '__main__':
     listen_audio()

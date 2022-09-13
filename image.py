@@ -57,24 +57,28 @@ def listen_image(hotkey: str = 'alt + 4'):
 
     print(f'Enter \'{hotkey}\' to search for an image')
     while True:
-        keyboard.wait(hotkey)
-        keyboard.press_and_release('backspace')
+        try:
+            keyboard.wait(hotkey)
+            keyboard.press_and_release('backspace')
 
-        print('Reading image name...')
-        keystrokes = keyboard.record(until='enter')
-        image_name = keystrokes_to_string(keystrokes)
+            print('Reading image name...')
+            keystrokes = keyboard.record(until='enter')
+            image_name = keystrokes_to_string(keystrokes)
 
-        print(f"Searching for image: {image_name}")
+            print(f"Searching for image: {image_name}")
 
-        filename = save_image(get_image_link(image_name))
+            filename = save_image(get_image_link(image_name))
 
-        if filename is None:
-            continue
+            if filename is None:
+                continue
 
-        print(f'{image_name} image found')
-        copy_file(filename)
-        keyboard.press_and_release('ctrl + v')
-        sleep(1)
+            print(f'{image_name} image found')
+            copy_file(filename)
+            keyboard.press_and_release('ctrl + v')
+            sleep(1)
+        except Exception as exception:                                                  # pylint: disable=broad-except
+            print(f'Unidentified error in listen_image: {type(exception).__name__}')
+            print(exception)
 
 if __name__ == '__main__':
     listen_image()
