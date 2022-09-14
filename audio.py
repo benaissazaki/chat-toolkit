@@ -15,6 +15,7 @@ def mp4_to_mp3(filename, output_path):
         video = AudioFileClip(filename)
         video.write_audiofile(output_path)
         video.close()
+        os.remove(filename)
         return output_path
 
     except Exception:                               # pylint: disable=broad-except
