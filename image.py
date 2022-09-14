@@ -4,6 +4,7 @@ import os
 import requests
 import keyboard
 from helpers import copy_file, keystrokes_to_string
+from settings import Settings
 
 def get_image_link(query: str) -> str:
     ''' Searches for @query with Websearch API and returns the url of the first result '''
@@ -13,7 +14,7 @@ def get_image_link(query: str) -> str:
     querystring = {"q":query,"pageNumber":"1","pageSize":"10","autoCorrect":"true"}
 
     headers = {
-        "X-RapidAPI-Key": "40c9d9e5fdmshf9fb7e6826835fbp16a5bcjsn298d5e17cee1",
+        "X-RapidAPI-Key": Settings.get_setting('image.api_key'),
         "X-RapidAPI-Host": "contextualwebsearch-websearch-v1.p.rapidapi.com"
     }
 
