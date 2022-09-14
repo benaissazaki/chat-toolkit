@@ -13,7 +13,9 @@ def get_lyrics_link(query: str) -> str:
 
     try:
         response = requests.get(
-            f"https://genius.com/api/search/multi?per_page=5&q={query}", timeout=2)
+            f"https://genius.com/api/search/multi?per_page=5&q={query}",
+            timeout=Settings.get_setting('request_timeout')
+        )
 
     except requests.exceptions.RequestException:
         print('Cannot search lyrics from genius.com')
@@ -38,8 +40,9 @@ def get_lyrics(query: str):
         return None
 
     try:
-        page = requests.get(link, timeout=2).text.replace('<i>', '').replace(
-            '</i>', '').replace('<b>', '').replace('</b>', '')
+        page = requests.get(link, timeout=Settings.get_setting('request_timeout')) \
+                .text.replace('<i>', '') \
+                .replace('</i>', '').replace('<b>', '').replace('</b>', '')
 
     except requests.exceptions.RequestException:
         print(f'Cannot get lyrics page {link}')
@@ -57,7 +60,7 @@ def get_lyrics(query: str):
     delete_mode = False
 
     for character in raw_lyrics:
-        if character == '[' and len(cleaned_lyrics) !=0 and cleaned_lyrics[-1] != '\n':
+        if character == '[' and len(cleaned_lyrics) != 0 and cleaned_lyrics[-1] != '\n':
             cleaned_lyrics += '\n'
 
         if character in ['[', '(']:
@@ -84,7 +87,8 @@ def listen_lyrics():
             keyboard.wait(launch_hotkey)
             keyboard.press_and_release('backspace')
 
-            print(f'Reading song title for lyrics, press {submit_hotkey} to submit')
+            print(
+                f'Reading song title for lyrics, press {submit_hotkey} to submit')
             keystrokes = keyboard.record(until=submit_hotkey)
             song_name = keystrokes_to_string(keystrokes)
 
@@ -100,8 +104,10 @@ def listen_lyrics():
                 keyboard.press_and_release('enter')
                 sleep(0.4)
         except Exception as exception:                                                  # pylint: disable=broad-except
-            print(f'Unidentified error in listen_lyrics: {type(exception).__name__}')
+            print(
+                f'Unidentified error in listen_lyrics: {type(exception).__name__}')
             print(exception)
+
 
 if __name__ == '__main__':
     listen_lyrics()

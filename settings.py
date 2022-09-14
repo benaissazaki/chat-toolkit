@@ -9,6 +9,7 @@ class Settings():
     settings_dict = {}
     default_settings = {
         'exit_hotkey': 'alt + *',
+        'request_timeout': 5,
         'image': {
             'api_key': None,
             'launch_hotkey': 'alt + 4',

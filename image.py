@@ -6,12 +6,14 @@ import keyboard
 from helpers import copy_file, keystrokes_to_string
 from settings import Settings
 
+
 def get_image_link(query: str) -> str:
     ''' Searches for @query with Websearch API and returns the url of the first result '''
 
     url = "https://contextualwebsearch-websearch-v1.p.rapidapi.com/api/Search/ImageSearchAPI"
 
-    querystring = {"q":query,"pageNumber":"1","pageSize":"10","autoCorrect":"true"}
+    querystring = {"q": query, "pageNumber": "1",
+                   "pageSize": "10", "autoCorrect": "true"}
 
     headers = {
         "X-RapidAPI-Key": Settings.get_setting('image.api_key'),
@@ -19,7 +21,10 @@ def get_image_link(query: str) -> str:
     }
 
     try:
-        response = requests.get(url, headers=headers, params=querystring, timeout=2)
+        response = requests.get(url,
+                                headers=headers,
+                                params=querystring,
+                                timeout=Settings.get_setting('request_timeout'))
         response.raise_for_status()
         response = response.json()
     except requests.exceptions.RequestException:
@@ -39,7 +44,9 @@ def save_image(link: str) -> str:
     extension = 'jpg'
     with open(os.path.join('output', 'images', f'tmp_pic.{extension}'), 'wb') as handle:
         try:
-            response = requests.get(link, stream=True, timeout=2)
+            response = requests.get(link,
+                                    stream=True,
+                                    timeout=Settings.get_setting('request_timeout'))
             response.raise_for_status()
         except requests.exceptions.RequestException:
             print('Cannot download image')
@@ -80,8 +87,10 @@ def listen_image():
                 continue
             keyboard.press_and_release('ctrl + v')
         except Exception as exception:                                                  # pylint: disable=broad-except
-            print(f'Unidentified error in listen_image: {type(exception).__name__}')
+            print(
+                f'Unidentified error in listen_image: {type(exception).__name__}')
             print(exception)
+
 
 if __name__ == '__main__':
     listen_image()
