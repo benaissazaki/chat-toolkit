@@ -4,7 +4,7 @@ import subprocess
 import os
 import keyboard
 import pytube
-import moviepy.editor as mp
+from moviepy.audio.io.AudioFileClip import AudioFileClip
 from helpers import keystrokes_to_string
 
 
@@ -12,7 +12,7 @@ def mp4_to_mp3(filename, output_path):
     ''' Convert mp4 video to mp3 audio '''
 
     try:
-        video = mp.AudioFileClip(filename)
+        video = AudioFileClip(filename)
         video.write_audiofile(output_path)
         video.close()
         return output_path
