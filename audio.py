@@ -6,6 +6,7 @@ import keyboard
 import pytube
 from moviepy.audio.io.AudioFileClip import AudioFileClip
 from helpers import keystrokes_to_string
+from settings import Settings
 
 
 def mp4_to_mp3(filename, output_path):
@@ -40,16 +41,18 @@ def download_audio(query):
     return result
 
 
-def listen_audio(hotkey: str = 'alt + 3'):
+def listen_audio():
     ''' Main infinite loop '''
 
+    launch_hotkey = Settings.get_setting('audio.launch_hotkey')
+    submit_hotkey = Settings.get_setting('audio.submit_hotkey')
     while True:
         try:
-            keyboard.wait(hotkey)
+            keyboard.wait(launch_hotkey)
             keyboard.press_and_release('backspace')
 
-            print('Reading song title...')
-            keystrokes = keyboard.record(until='enter')
+            print(f'Reading song title, press {submit_hotkey} to submit')
+            keystrokes = keyboard.record(until=submit_hotkey)
             song_name = keystrokes_to_string(keystrokes)
 
             print(f"Searching for song: {song_name}")

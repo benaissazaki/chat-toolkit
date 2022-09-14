@@ -53,16 +53,18 @@ def save_image(link: str) -> str:
     return os.path.join('output', 'images', f'tmp_pic.{extension}')
 
 
-def listen_image(hotkey: str = 'alt + 4'):
+def listen_image():
     ''' Main infinite loop '''
 
+    launch_hotkey = Settings.get_setting('image.launch_hotkey')
+    submit_hotkey = Settings.get_setting('image.submit_hotkey')
     while True:
         try:
-            keyboard.wait(hotkey)
+            keyboard.wait(launch_hotkey)
             keyboard.press_and_release('backspace')
 
-            print('Reading image name...')
-            keystrokes = keyboard.record(until='enter')
+            print(f'Reading image name, press {submit_hotkey} to submit')
+            keystrokes = keyboard.record(until=submit_hotkey)
             image_name = keystrokes_to_string(keystrokes)
 
             print(f"Searching for image: {image_name}")

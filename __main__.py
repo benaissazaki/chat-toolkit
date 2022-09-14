@@ -34,9 +34,9 @@ if __name__ == '__main__':
 
     EXIT_HOTKEY = Settings.get_setting('exit_hotkey')
 
-    image_thread = Thread(target=listen_image, args=[IMAGE_HOTKEY], daemon=True)
-    audio_thread = Thread(target=listen_audio, args=[AUDIO_HOTKEY], daemon=True)
-    lyrics_thread = Thread(target=listen_lyrics, args=[LYRICS_HOTKEY], daemon=True)
+    image_thread = Thread(target=listen_image, daemon=True)
+    audio_thread = Thread(target=listen_audio, daemon=True)
+    lyrics_thread = Thread(target=listen_lyrics, daemon=True)
 
     if Settings.get_setting('image.api_key') is not None:
         image_thread.start()

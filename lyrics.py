@@ -5,6 +5,7 @@ import keyboard
 from bs4 import BeautifulSoup
 import requests
 from helpers import keystrokes_to_string
+from settings import Settings
 
 
 def get_lyrics_link(query: str) -> str:
@@ -73,16 +74,18 @@ def get_lyrics(query: str):
     return cleaned_lyrics
 
 
-def listen_lyrics(hotkey: str = 'alt + 5'):
+def listen_lyrics():
     ''' Main infinite loop '''
 
+    launch_hotkey = Settings.get_setting('lyrics.launch_hotkey')
+    submit_hotkey = Settings.get_setting('lyrics.submit_hotkey')
     while True:
         try:
-            keyboard.wait(hotkey)
+            keyboard.wait(launch_hotkey)
             keyboard.press_and_release('backspace')
 
-            print('Reading song title for lyrics...')
-            keystrokes = keyboard.record(until='enter')
+            print(f'Reading song title for lyrics, press {submit_hotkey} to submit')
+            keystrokes = keyboard.record(until=submit_hotkey)
             song_name = keystrokes_to_string(keystrokes)
 
             print(f"Searching for song lyrics: {song_name}")
