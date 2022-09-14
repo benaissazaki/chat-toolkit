@@ -8,6 +8,7 @@ keyboard = "*"
 pytube = "*"
 moviepy = "*"
 bs4 = "*"
+pyinstaller = "*"
 
 [dev-packages]
 pylint = "*"
@@ -15,3 +16,6 @@ autopep8 = "*"
 
 [requires]
 python_version = "3.10"
+
+[scripts]
+build = "pyinstaller __main__.py -n whatspam --onefile --icon=icon.ico -y"

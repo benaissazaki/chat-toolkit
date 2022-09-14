@@ -4,17 +4,19 @@ import subprocess
 import os
 import keyboard
 import pytube
-import moviepy.editor as mp
+from moviepy.audio.io.AudioFileClip import AudioFileClip
 from helpers import keystrokes_to_string
+from settings import Settings
 
 
 def mp4_to_mp3(filename, output_path):
     ''' Convert mp4 video to mp3 audio '''
 
     try:
-        video = mp.AudioFileClip(filename)
+        video = AudioFileClip(filename)
         video.write_audiofile(output_path)
         video.close()
+        os.remove(filename)
         return output_path
 
     except Exception:                               # pylint: disable=broad-except
@@ -39,16 +41,18 @@ def download_audio(query):
     return result
 
 
-def listen_audio(hotkey: str = 'alt + 3'):
+def listen_audio():
     ''' Main infinite loop '''
 
+    launch_hotkey = Settings.get_setting('audio.launch_hotkey')
+    submit_hotkey = Settings.get_setting('audio.submit_hotkey')
     while True:
         try:
-            keyboard.wait(hotkey)
+            keyboard.wait(launch_hotkey)
             keyboard.press_and_release('backspace')
 
-            print('Reading song title...')
-            keystrokes = keyboard.record(until='enter')
+            print(f'Reading song title, press {submit_hotkey} to submit')
+            keystrokes = keyboard.record(until=submit_hotkey)
             song_name = keystrokes_to_string(keystrokes)
 
             print(f"Searching for song: {song_name}")
