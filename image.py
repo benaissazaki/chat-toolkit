@@ -1,6 +1,7 @@
 ''' Downloads image then copy-pastes it '''
 
 import os
+from time import sleep
 from typing import List
 import requests
 import keyboard
@@ -17,7 +18,7 @@ def get_image_link(query: str) -> str:
                    "pageSize": "10", "autoCorrect": "true"}
 
     headers = {
-        "X-RapidAPI-Key": Settings.get_setting('image.api_key'),
+        "X-RapidAPI-Key": Settings.get_setting('rapidapi_key'),
         "X-RapidAPI-Host": "contextualwebsearch-websearch-v1.p.rapidapi.com"
     }
 
@@ -73,6 +74,8 @@ def listen_image():
     while True:
         try:
             keyboard.wait(launch_hotkey)
+            sleep(0.2)
+            keyboard.press_and_release('ctrl + a')
             keyboard.press_and_release('backspace')
 
             print(f'Reading image name, press {submit_hotkey} to submit')
@@ -98,4 +101,5 @@ def listen_image():
 
 
 if __name__ == '__main__':
+    Settings.load_settings()
     listen_image()
