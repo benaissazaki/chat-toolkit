@@ -9,6 +9,8 @@ pytube = "*"
 moviepy = "*"
 bs4 = "*"
 pyinstaller = "*"
+pywin32 = "*"
+pillow = "*"
 
 [dev-packages]
 pylint = "*"

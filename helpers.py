@@ -1,10 +1,35 @@
 ''' Helper functions common to multiple modules '''
 
+from io import BytesIO
 import os
 import subprocess
 from typing import List
 import keyboard
 import requests
+from PIL import Image
+from win32 import win32clipboard
+
+def copy_image(file: str):
+    ''' Copy image to the clipboard as bytes (Windows only) '''
+
+    try:
+        image = Image.open(file)
+        output = BytesIO()
+        image.convert('RGB').save(output, 'BMP')
+        data = output.getvalue()[14:]
+        output.close()
+
+        # pylint: disable=c-extension-no-member
+        win32clipboard.OpenClipboard()
+        win32clipboard.EmptyClipboard()
+        win32clipboard.SetClipboardData(win32clipboard.CF_DIB, data)
+        win32clipboard.CloseClipboard()
+        # pylint: enable=c-extension-no-member
+
+        return True
+    except Exception:                                                   # pylint: disable=broad-except
+        print('Couldnt copy image to clipboard')
+        return False
 
 def copy_file(file: str):
     ''' Copy file to clipboard (Windows only) '''

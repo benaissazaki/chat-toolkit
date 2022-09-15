@@ -3,7 +3,7 @@
 import os
 import requests
 import keyboard
-from helpers import copy_file, keystrokes_to_string
+from helpers import copy_image, keystrokes_to_string
 from settings import Settings
 
 
@@ -83,7 +83,7 @@ def listen_image():
 
             print(f'{image_name} image found')
 
-            if not copy_file(filename):
+            if not copy_image(filename):
                 continue
             keyboard.press_and_release('ctrl + v')
         except Exception as exception:                                                  # pylint: disable=broad-except
