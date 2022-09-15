@@ -22,6 +22,9 @@ class Settings():
         'audio': {
             'launch_hotkey': 'alt + 3',
             'submit_hotkey': 'enter'
+        },
+        'jokes': {
+            'launch_hotkey': 'alt + 2'
         }
     }
 
