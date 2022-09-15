@@ -10,8 +10,8 @@ class Settings():
     default_settings = {
         'exit_hotkey': 'alt + *',
         'request_timeout': 5,
+        'rapidapi_key': None,
         'image': {
-            'api_key': None,
             'launch_hotkey': 'alt + 4',
             'submit_hotkey': 'enter'
         },

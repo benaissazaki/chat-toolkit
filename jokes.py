@@ -14,7 +14,7 @@ def get_random_joke():
     querystring = {"format": "json", "blacklistFlags": "nsfw,explicit"}
 
     headers = {
-        "X-RapidAPI-Key": Settings.get_setting('image.api_key'),
+        "X-RapidAPI-Key": Settings.get_setting('rapidapi_key'),
         "X-RapidAPI-Host": "jokeapi-v2.p.rapidapi.com"
     }
 

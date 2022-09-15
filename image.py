@@ -17,7 +17,7 @@ def get_image_link(query: str) -> str:
                    "pageSize": "10", "autoCorrect": "true"}
 
     headers = {
-        "X-RapidAPI-Key": Settings.get_setting('image.api_key'),
+        "X-RapidAPI-Key": Settings.get_setting('rapidapi_key'),
         "X-RapidAPI-Host": "contextualwebsearch-websearch-v1.p.rapidapi.com"
     }
 
