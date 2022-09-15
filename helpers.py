@@ -9,6 +9,8 @@ import requests
 from PIL import Image
 from win32 import win32clipboard
 
+from settings import Settings
+
 def copy_image(file: str):
     ''' Copy image to the clipboard as bytes (Windows only) '''
 
@@ -63,7 +65,7 @@ def check_internet_access():
     ''' Send get request to google to check internet access '''
 
     try:
-        requests.get('https://www.google.com', timeout=2)
+        requests.get('https://www.google.com', timeout=Settings.get_setting('request_timeout'))
         return True
     except requests.exceptions.RequestException:
         return False

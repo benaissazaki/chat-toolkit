@@ -85,6 +85,8 @@ def listen_lyrics():
     while True:
         try:
             keyboard.wait(launch_hotkey)
+            sleep(0.2)
+            keyboard.press_and_release('ctrl + a')
             keyboard.press_and_release('backspace')
 
             print(
@@ -110,4 +112,5 @@ def listen_lyrics():
 
 
 if __name__ == '__main__':
+    Settings.load_settings()
     listen_lyrics()
