@@ -1,6 +1,7 @@
 ''' Downloads image then copy-pastes it '''
 
 import os
+from typing import List
 import requests
 import keyboard
 from helpers import copy_image, keystrokes_to_string
@@ -30,34 +31,38 @@ def get_image_link(query: str) -> str:
     except requests.exceptions.RequestException:
         print('Cannot access the Websearch API')
         return None
-    link = response['value'][0]['url']
-    return link
+    links = [image['url'] for image in response['value']]
+    return links
 
 
-def save_image(link: str) -> str:
+def save_image(links: List[str]) -> str:
     ''' Downloads the image from @link and returns its filepath '''
 
-    if link is None:
+    if links is None:
         print('Cannot download image')
         return None
 
     extension = 'jpg'
+    valid_image_found = False
     with open(os.path.join('output', 'images', f'tmp_pic.{extension}'), 'wb') as handle:
-        try:
-            response = requests.get(link,
-                                    stream=True,
-                                    timeout=Settings.get_setting('request_timeout'))
-            response.raise_for_status()
-        except requests.exceptions.RequestException:
-            print('Cannot download image')
-            return None
+        for link in links:
+            try:
+                response = requests.get(link,
+                                        stream=True,
+                                        timeout=Settings.get_setting('request_timeout'))
+                response.raise_for_status()
+                valid_image_found = True
+            except requests.exceptions.RequestException:
+                print(f'Cannot download image {link}')
+                continue
 
-        for block in response.iter_content(1024):
-            if not block:
-                break
+            for block in response.iter_content(1024):
+                if not block:
+                    break
 
-            handle.write(block)
-    return os.path.join('output', 'images', f'tmp_pic.{extension}')
+                handle.write(block)
+            break
+    return os.path.join('output', 'images', f'tmp_pic.{extension}') if valid_image_found else None
 
 
 def listen_image():
