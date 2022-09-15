@@ -25,6 +25,11 @@ class Settings():
         },
         'jokes': {
             'launch_hotkey': 'alt + 2'
+        },
+        'translate': {
+            'launch_hotkey': 'alt + t',
+            'submit_language_hotkey': '<',
+            'submit_text_hotkey': '<'
         }
     }
 
