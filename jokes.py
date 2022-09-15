@@ -9,19 +9,13 @@ from settings import Settings
 def get_random_joke():
     ''' Get a random joke from JokeAPI '''
 
-    url = "https://jokeapi-v2.p.rapidapi.com/joke/Any"
+    url = "https://v2.jokeapi.dev/joke/Any"
 
     querystring = {"format": "json", "blacklistFlags": "nsfw,explicit"}
-
-    headers = {
-        "X-RapidAPI-Key": Settings.get_setting('rapidapi_key'),
-        "X-RapidAPI-Host": "jokeapi-v2.p.rapidapi.com"
-    }
 
     try:
         response = requests.get(
             url,
-            headers=headers,
             params=querystring,
             timeout=Settings.get_setting('request_timeout'))
         response.raise_for_status()
@@ -34,6 +28,8 @@ def get_random_joke():
 def type_joke(joke):
     ''' Type the joke into the keyboard '''
 
+    keyboard.press_and_release('ctrl + a')
+    keyboard.press_and_release('backspace')
     if joke['type'] == 'twopart':
         keyboard.write(joke['setup'])
         keyboard.press_and_release('enter')
@@ -52,7 +48,6 @@ def listen_jokes():
     while True:
         try:
             keyboard.wait(launch_hotkey)
-            keyboard.press_and_release('backspace')
 
             print('Sending random joke')
             joke = get_random_joke()

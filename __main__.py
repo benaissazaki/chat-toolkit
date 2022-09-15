@@ -44,17 +44,16 @@ if __name__ == '__main__':
     if Settings.get_setting('rapidapi_key') is not None:
         image_thread.start()
         print(f'Press {IMAGE_HOTKEY} to search and send an image')
-
-        jokes_thread.start()
-        print(f'Press {JOKES_HOTKEY} to send a random joke')
     else:
         print('rapidapi_key not found in settings.json, some modules won\'t start')
 
     audio_thread.start()
     lyrics_thread.start()
+    jokes_thread.start()
 
     print(f'Press {AUDIO_HOTKEY} to search and send a song')
     print(f'Press {LYRICS_HOTKEY} to search and send a song\'s lyrics')
+    print(f'Press {JOKES_HOTKEY} to send a random joke')
 
     print(f'\nThe systems are running.\nPress {EXIT_HOTKEY} to exit\n')
     keyboard.wait(EXIT_HOTKEY)
