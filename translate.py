@@ -24,7 +24,8 @@ def listen_translate():
     ''' Main infinite loop '''
 
     launch_hotkey = Settings.get_setting('translate.launch_hotkey')
-    submit_language_hotkey = Settings.get_setting('translate.submit_language_hotkey')
+    submit_language_hotkey = Settings.get_setting(
+        'translate.submit_language_hotkey')
     submit_text_hotkey = Settings.get_setting('translate.submit_text_hotkey')
 
     while True:
@@ -34,19 +35,23 @@ def listen_translate():
             keyboard.press_and_release('ctrl + a')
             keyboard.press_and_release('backspace')
 
-            print(f'Enter the destination language then press {submit_language_hotkey}')
+            print(
+                f'Enter the destination language then press {submit_language_hotkey}')
             keystrokes = keyboard.record(until=submit_language_hotkey)
             keyboard.press_and_release('ctrl + a')
             sleep(0.5)
             keyboard.press_and_release('backspace')
-            destination_language = keystrokes_to_string(keystrokes)[:-1]
+            destination_language = keystrokes_to_string(
+                keystrokes).replace(submit_language_hotkey, '')
 
-            print(f'Enter the message you wish to translate the press {submit_text_hotkey}')
+            print(
+                f'Enter the message you wish to translate the press {submit_text_hotkey}')
             keystrokes = keyboard.record(until=submit_text_hotkey)
             keyboard.press_and_release('ctrl + a')
             sleep(0.5)
             keyboard.press_and_release('backspace')
-            text_to_translate = keystrokes_to_string(keystrokes)[:-1]
+            text_to_translate = keystrokes_to_string(
+                keystrokes).replace(submit_text_hotkey, '')
 
             translated = translate(destination_language, text_to_translate)
 
