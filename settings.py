@@ -17,8 +17,7 @@ class Settings():
         'image': {
             'launch_hotkey': 'alt + 4',
             'submit_hotkey': 'enter',
-            'pool_size': 5,
-            'max_offset': 0
+            'max_offset': 5
         },
         'lyrics': {
             'launch_hotkey': 'alt + 5',
