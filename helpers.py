@@ -4,6 +4,7 @@ from io import BytesIO
 import os
 import subprocess
 import logging
+import sys
 from typing import List
 from time import sleep
 import keyboard
@@ -102,3 +103,4 @@ def configure_logging():
     log_format = Settings.get_setting('log_format')
 
     logging.basicConfig(level=logging_level, filename=log_filename, filemode='a', format=log_format)
+    logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
