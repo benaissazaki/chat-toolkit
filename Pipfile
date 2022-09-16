@@ -12,6 +12,7 @@ pyinstaller = "*"
 pywin32 = "*"
 pillow = "*"
 googletrans = "==4.0.0rc1"
+icrawler = "*"
 
 [dev-packages]
 pylint = "*"
