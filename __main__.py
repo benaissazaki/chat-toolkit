@@ -6,12 +6,12 @@ from json import JSONDecodeError
 from pathlib import Path
 import keyboard
 from helpers import check_internet_access
-from image import listen_image
-from audio import listen_audio
-from lyrics import listen_lyrics
-from jokes import listen_jokes
+from modules.image import listen_image
+from modules.audio import listen_audio
+from modules.lyrics import listen_lyrics
+from modules.jokes import listen_jokes
+from modules.translate import listen_translate
 from settings import Settings
-from translate import listen_translate
 
 if __name__ == '__main__':
     if not check_internet_access():
