@@ -11,6 +11,7 @@ from audio import listen_audio
 from lyrics import listen_lyrics
 from jokes import listen_jokes
 from settings import Settings
+from translate import listen_translate
 
 if __name__ == '__main__':
     if not check_internet_access():
@@ -33,6 +34,7 @@ if __name__ == '__main__':
     AUDIO_HOTKEY = Settings.get_setting('audio.launch_hotkey')
     LYRICS_HOTKEY = Settings.get_setting('lyrics.launch_hotkey')
     JOKES_HOTKEY = Settings.get_setting('jokes.launch_hotkey')
+    TRANSLATE_HOTKEY = Settings.get_setting('translate.launch_hotkey')
 
     EXIT_HOTKEY = Settings.get_setting('exit_hotkey')
 
@@ -40,6 +42,7 @@ if __name__ == '__main__':
     audio_thread = Thread(target=listen_audio, daemon=True)
     lyrics_thread = Thread(target=listen_lyrics, daemon=True)
     jokes_thread = Thread(target=listen_jokes, daemon=True)
+    translate_thread = Thread(target=listen_translate, daemon=True)
 
     if Settings.get_setting('rapidapi_key') is not None:
         image_thread.start()
@@ -50,10 +53,12 @@ if __name__ == '__main__':
     audio_thread.start()
     lyrics_thread.start()
     jokes_thread.start()
+    translate_thread.start()
 
     print(f'Press {AUDIO_HOTKEY} to search and send a song')
     print(f'Press {LYRICS_HOTKEY} to search and send a song\'s lyrics')
     print(f'Press {JOKES_HOTKEY} to send a random joke')
+    print(f'Press {TRANSLATE_HOTKEY} to send a translated message')
 
     print(f'\nThe systems are running.\nPress {EXIT_HOTKEY} to exit\n')
     keyboard.wait(EXIT_HOTKEY)
