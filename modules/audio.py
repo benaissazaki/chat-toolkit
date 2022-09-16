@@ -1,5 +1,6 @@
 ''' Downloads audio from Youtube video then opens the folder containing it'''
 
+import logging
 import subprocess
 import os
 import keyboard
@@ -19,8 +20,11 @@ def mp4_to_mp3(filename, output_path):
         os.remove(filename)
         return output_path
 
-    except Exception:                               # pylint: disable=broad-except
-        print('Cannot convert audio to mp3')
+    except Exception:                                           # pylint: disable=broad-except
+        logging.error('Cannot convert %s to %s',
+                      filename,
+                      output_path,
+                      exc_info=True)
         return None
 
 
@@ -32,7 +36,7 @@ def download_audio(query):
         first_result.streams.filter(type='audio')[0].download(
             output_path=os.path.join('output', 'audio'), filename='tmp.mp4')
     except pytube.exceptions.PytubeError:
-        print('Cannot download song from Youtube')
+        logging.error('Cannot download %s from Youtube', query)
         return None
 
     result = mp4_to_mp3(os.path.join('output', 'audio', 'tmp.mp4'),
@@ -50,6 +54,7 @@ def listen_audio():
         try:
             keyboard.wait(launch_hotkey)
             clear_input_field()
+            logging.info('Summoned Audio')
 
             print(f'Reading song title, press {submit_hotkey} to submit')
             keystrokes = keyboard.record(until=submit_hotkey)
@@ -57,17 +62,21 @@ def listen_audio():
             song_name = keystrokes_to_string(
                 keystrokes).replace(submit_hotkey, '')
 
-            print(f"Searching for song: {song_name}")
+            logging.info('Searching for song \'%s\'', song_name)
+
             audio_filepath = download_audio(song_name)
             if audio_filepath is not None:
+                logging.info("Downloaded song '%s' in \'%s\'",
+                             song_name,
+                             audio_filepath)
                 path = os.path.abspath(audio_filepath)
                 subprocess.run(
                     f'explorer /select, "{path}"', check=False)
-        except Exception as exception:                                                          # pylint: disable=broad-except
-            print(
-                f'Unidentified error in listen_audio: {type(exception).__name__}')
-            print(exception)
+
+        except Exception:                                                          # pylint: disable=broad-except
+            logging.error("Exception occurred in Audio", exc_info=True)
 
 
 if __name__ == '__main__':
+    Settings.load_settings()
     listen_audio()

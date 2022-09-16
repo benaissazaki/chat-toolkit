@@ -4,3 +4,4 @@ build/
 dist/ 
 *.spec
 settings.json
+*.log

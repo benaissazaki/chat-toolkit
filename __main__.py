@@ -1,5 +1,6 @@
 ''' Launches all main loops in their own threads '''
 
+import logging
 import sys
 from threading import Thread
 from json import JSONDecodeError
@@ -59,4 +60,7 @@ if __name__ == '__main__':
     print(f'Press {TRANSLATE_HOTKEY} to send a translated message')
 
     print(f'\nThe systems are running.\nPress {EXIT_HOTKEY} to exit\n')
+    logging.info('Application started successfully')
+
     keyboard.wait(EXIT_HOTKEY)
+    logging.info('Application closed successfully')
