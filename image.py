@@ -1,6 +1,7 @@
 ''' Downloads image then copy-pastes it '''
 
-from random import randrange
+import os
+import random
 import shutil
 from pathlib import Path
 import keyboard
@@ -12,15 +13,14 @@ from settings import Settings
 def get_and_copy_image(query: str, max_num: int = 5, max_offset: int = 20) -> str:
     ''' Downloads the image from @link and returns its filepath '''
 
-    random_offset = randrange(0, max_offset)
-    destination_path = 'output/images/'
+    random_offset = random.randrange(0, max_offset + 1)
+    destination_path = os.path.join('output', 'images')
     crawler = GoogleImageCrawler(storage={'root_dir': destination_path})
     shutil.rmtree(destination_path)
     crawler.crawl(query, max_num=max_num, offset=random_offset)
 
-    chosen_image_number = str(randrange(1, max_num+1))
-    chosen_image_path = destination_path + '0' * \
-        (6 - len(chosen_image_number)) + chosen_image_number + '.jpg'
+    chosen_image_path = os.path.join(
+        destination_path, random.choice(os.listdir(destination_path)))
 
     copy_image(chosen_image_path)
     keyboard.press_and_release('ctrl + v')

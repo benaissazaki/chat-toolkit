@@ -31,8 +31,9 @@ def copy_image(file: str):
         # pylint: enable=c-extension-no-member
 
         return True
-    except Exception:                                                   # pylint: disable=broad-except
+    except Exception as exception:                                                   # pylint: disable=broad-except
         print('Couldnt copy image to clipboard')
+        print(exception)
         return False
 
 
