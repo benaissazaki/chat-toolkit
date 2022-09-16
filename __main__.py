@@ -5,7 +5,7 @@ from threading import Thread
 from json import JSONDecodeError
 from pathlib import Path
 import keyboard
-from helpers import check_internet_access
+from helpers import check_internet_access, configure_logging
 from modules.image import listen_image
 from modules.audio import listen_audio
 from modules.lyrics import listen_lyrics
@@ -29,6 +29,8 @@ if __name__ == '__main__':
         print('settings.json not found, will use default settings\n')
     except JSONDecodeError:
         print('Cannot decode settings.json, will use default settings\n')
+
+    configure_logging()
 
     IMAGE_HOTKEY = Settings.get_setting('image.launch_hotkey')
     AUDIO_HOTKEY = Settings.get_setting('audio.launch_hotkey')

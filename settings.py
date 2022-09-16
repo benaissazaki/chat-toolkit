@@ -11,6 +11,9 @@ class Settings():
         'exit_hotkey': 'alt + *',
         'request_timeout': 5,
         'rapidapi_key': None,
+        'logging_level': 'INFO',
+        'log_filename': 'app.log',
+        'log_format': '%(asctime)s - %(levelname)s - %(message)s',
         'image': {
             'launch_hotkey': 'alt + 4',
             'submit_hotkey': 'enter',

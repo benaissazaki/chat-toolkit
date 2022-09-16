@@ -3,13 +3,13 @@
 from io import BytesIO
 import os
 import subprocess
+import logging
 from typing import List
 from time import sleep
 import keyboard
 import requests
 from PIL import Image
 from win32 import win32clipboard
-
 from settings import Settings
 
 
@@ -92,3 +92,13 @@ def clear_input_field():
     keyboard.press_and_release('ctrl + a')
     sleep(0.5)
     keyboard.press_and_release('backspace')
+
+
+def configure_logging():
+    ''' Configure the application's logging from Settings  '''
+
+    logging_level = logging.getLevelName(Settings.get_setting('logging_level'))
+    log_filename = Settings.get_setting('log_filename')
+    log_format = Settings.get_setting('log_format')
+
+    logging.basicConfig(level=logging_level, filename=log_filename, filemode='a', format=log_format)
