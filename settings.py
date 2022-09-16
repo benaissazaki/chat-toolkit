@@ -13,7 +13,9 @@ class Settings():
         'rapidapi_key': None,
         'image': {
             'launch_hotkey': 'alt + 4',
-            'submit_hotkey': 'enter'
+            'submit_hotkey': 'enter',
+            'pool_size': 10,
+            'max_offset': 10
         },
         'lyrics': {
             'launch_hotkey': 'alt + 5',

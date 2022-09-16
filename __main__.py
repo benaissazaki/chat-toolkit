@@ -44,17 +44,13 @@ if __name__ == '__main__':
     jokes_thread = Thread(target=listen_jokes, daemon=True)
     translate_thread = Thread(target=listen_translate, daemon=True)
 
-    if Settings.get_setting('rapidapi_key') is not None:
-        image_thread.start()
-        print(f'Press {IMAGE_HOTKEY} to search and send an image')
-    else:
-        print('rapidapi_key not found in settings.json, some modules won\'t start')
-
+    image_thread.start()
     audio_thread.start()
     lyrics_thread.start()
     jokes_thread.start()
     translate_thread.start()
 
+    print(f'Press {IMAGE_HOTKEY} to search and send an image')
     print(f'Press {AUDIO_HOTKEY} to search and send a song')
     print(f'Press {LYRICS_HOTKEY} to search and send a song\'s lyrics')
     print(f'Press {JOKES_HOTKEY} to send a random joke')

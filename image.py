@@ -1,68 +1,32 @@
 ''' Downloads image then copy-pastes it '''
 
-import os
-from typing import List
-import requests
+from random import randrange
+import shutil
+from pathlib import Path
 import keyboard
+from icrawler.builtin import GoogleImageCrawler
 from helpers import copy_image, keystrokes_to_string, clear_input_field
 from settings import Settings
 
 
-def get_image_link(query: str) -> str:
-    ''' Searches for @query with Websearch API and returns the url of the first result '''
-
-    url = "https://contextualwebsearch-websearch-v1.p.rapidapi.com/api/Search/ImageSearchAPI"
-
-    querystring = {"q": query, "pageNumber": "1",
-                   "pageSize": "10", "autoCorrect": "true"}
-
-    headers = {
-        "X-RapidAPI-Key": Settings.get_setting('rapidapi_key'),
-        "X-RapidAPI-Host": "contextualwebsearch-websearch-v1.p.rapidapi.com"
-    }
-
-    try:
-        response = requests.get(url,
-                                headers=headers,
-                                params=querystring,
-                                timeout=Settings.get_setting('request_timeout'))
-        response.raise_for_status()
-        response = response.json()
-    except requests.exceptions.RequestException:
-        print('Cannot access the Websearch API')
-        return None
-    links = [image['url'] for image in response['value']]
-    return links
-
-
-def save_image(links: List[str]) -> str:
+def get_and_copy_image(query: str, max_num: int = 5, max_offset: int = 20) -> str:
     ''' Downloads the image from @link and returns its filepath '''
 
-    if links is None:
-        print('Cannot download image')
-        return None
+    random_offset = randrange(0, max_offset)
+    destination_path = 'output/images/'
+    crawler = GoogleImageCrawler(storage={'root_dir': destination_path})
+    shutil.rmtree(destination_path)
+    crawler.crawl(query, max_num=max_num, offset=random_offset)
 
-    extension = 'jpg'
-    valid_image_found = False
-    with open(os.path.join('output', 'images', f'tmp_pic.{extension}'), 'wb') as handle:
-        for link in links:
-            try:
-                response = requests.get(link,
-                                        stream=True,
-                                        timeout=Settings.get_setting('request_timeout'))
-                response.raise_for_status()
-                valid_image_found = True
-            except requests.exceptions.RequestException:
-                print(f'Cannot download image {link}')
-                continue
+    chosen_image_number = str(randrange(1, max_num+1))
+    chosen_image_path = destination_path + '0' * \
+        (6 - len(chosen_image_number)) + chosen_image_number + '.jpg'
 
-            for block in response.iter_content(1024):
-                if not block:
-                    break
+    copy_image(chosen_image_path)
+    keyboard.press_and_release('ctrl + v')
 
-                handle.write(block)
-            break
-    return os.path.join('output', 'images', f'tmp_pic.{extension}') if valid_image_found else None
+    shutil.rmtree(destination_path)
+    Path(destination_path).mkdir(parents=True, exist_ok=True)
 
 
 def listen_image():
@@ -82,16 +46,9 @@ def listen_image():
 
             print(f"Searching for image: {image_name}")
 
-            filename = save_image(get_image_link(image_name))
-
-            if filename is None:
-                continue
-
-            print(f'{image_name} image found')
-
-            if not copy_image(filename):
-                continue
-            keyboard.press_and_release('ctrl + v')
+            get_and_copy_image(image_name,
+                               Settings.get_setting('image.pool_size'),
+                               Settings.get_setting('image.max_offset'))
         except Exception as exception:                                                  # pylint: disable=broad-except
             print(
                 f'Unidentified error in listen_image: {type(exception).__name__}')
