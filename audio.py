@@ -54,7 +54,8 @@ def listen_audio():
             print(f'Reading song title, press {submit_hotkey} to submit')
             keystrokes = keyboard.record(until=submit_hotkey)
             clear_input_field()
-            song_name = keystrokes_to_string(keystrokes)
+            song_name = keystrokes_to_string(
+                keystrokes).replace(submit_hotkey, '')
 
             print(f"Searching for song: {song_name}")
             audio_filepath = download_audio(song_name)

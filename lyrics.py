@@ -41,8 +41,8 @@ def get_lyrics(query: str):
 
     try:
         page = requests.get(link, timeout=Settings.get_setting('request_timeout')) \
-                .text.replace('<i>', '') \
-                .replace('</i>', '').replace('<b>', '').replace('</b>', '')
+            .text.replace('<i>', '') \
+            .replace('</i>', '').replace('<b>', '').replace('</b>', '')
 
     except requests.exceptions.RequestException:
         print(f'Cannot get lyrics page {link}')
@@ -91,7 +91,8 @@ def listen_lyrics():
                 f'Reading song title for lyrics, press {submit_hotkey} to submit')
             keystrokes = keyboard.record(until=submit_hotkey)
             clear_input_field()
-            song_name = keystrokes_to_string(keystrokes)
+            song_name = keystrokes_to_string(
+                keystrokes).replace(submit_hotkey, '')
 
             print(f"Searching for song lyrics: {song_name}")
             lyrics = get_lyrics(song_name)

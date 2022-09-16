@@ -42,7 +42,8 @@ def listen_image():
             print(f'Reading image name, press {submit_hotkey} to submit')
             keystrokes = keyboard.record(until=submit_hotkey)
             clear_input_field()
-            image_name = keystrokes_to_string(keystrokes)
+            image_name = keystrokes_to_string(
+                keystrokes).replace(submit_hotkey, '')
 
             print(f"Searching for image: {image_name}")
 
