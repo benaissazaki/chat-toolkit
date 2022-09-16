@@ -1,11 +1,10 @@
 ''' Downloads image then copy-pastes it '''
 
 import os
-from time import sleep
 from typing import List
 import requests
 import keyboard
-from helpers import copy_image, keystrokes_to_string
+from helpers import copy_image, keystrokes_to_string, clear_input_field
 from settings import Settings
 
 
@@ -74,12 +73,11 @@ def listen_image():
     while True:
         try:
             keyboard.wait(launch_hotkey)
-            sleep(0.2)
-            keyboard.press_and_release('ctrl + a')
-            keyboard.press_and_release('backspace')
+            clear_input_field()
 
             print(f'Reading image name, press {submit_hotkey} to submit')
             keystrokes = keyboard.record(until=submit_hotkey)
+            clear_input_field()
             image_name = keystrokes_to_string(keystrokes)
 
             print(f"Searching for image: {image_name}")

@@ -4,7 +4,7 @@ from time import sleep
 import keyboard
 from bs4 import BeautifulSoup
 import requests
-from helpers import keystrokes_to_string
+from helpers import keystrokes_to_string, clear_input_field
 from settings import Settings
 
 
@@ -85,13 +85,12 @@ def listen_lyrics():
     while True:
         try:
             keyboard.wait(launch_hotkey)
-            sleep(0.2)
-            keyboard.press_and_release('ctrl + a')
-            keyboard.press_and_release('backspace')
+            clear_input_field()
 
             print(
                 f'Reading song title for lyrics, press {submit_hotkey} to submit')
             keystrokes = keyboard.record(until=submit_hotkey)
+            clear_input_field()
             song_name = keystrokes_to_string(keystrokes)
 
             print(f"Searching for song lyrics: {song_name}")

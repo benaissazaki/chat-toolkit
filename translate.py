@@ -1,10 +1,9 @@
 ''' Translate to any language on the fly using googletrans '''
 
-from time import sleep
 import keyboard
 from googletrans import Translator
 from settings import Settings
-from helpers import keystrokes_to_string
+from helpers import clear_input_field, keystrokes_to_string
 
 
 def translate(language, text):
@@ -31,25 +30,19 @@ def listen_translate():
     while True:
         try:
             keyboard.wait(launch_hotkey)
-            sleep(0.3)
-            keyboard.press_and_release('ctrl + a')
-            keyboard.press_and_release('backspace')
+            clear_input_field()
 
             print(
                 f'Enter the destination language then press {submit_language_hotkey}')
             keystrokes = keyboard.record(until=submit_language_hotkey)
-            keyboard.press_and_release('ctrl + a')
-            sleep(0.5)
-            keyboard.press_and_release('backspace')
+            clear_input_field()
             destination_language = keystrokes_to_string(
                 keystrokes).replace(submit_language_hotkey, '')
 
             print(
                 f'Enter the message you wish to translate the press {submit_text_hotkey}')
             keystrokes = keyboard.record(until=submit_text_hotkey)
-            keyboard.press_and_release('ctrl + a')
-            sleep(0.5)
-            keyboard.press_and_release('backspace')
+            clear_input_field()
             text_to_translate = keystrokes_to_string(
                 keystrokes).replace(submit_text_hotkey, '')
 

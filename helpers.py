@@ -4,6 +4,7 @@ from io import BytesIO
 import os
 import subprocess
 from typing import List
+from time import sleep
 import keyboard
 import requests
 from PIL import Image
@@ -81,3 +82,12 @@ def check_internet_access():
         return True
     except requests.exceptions.RequestException:
         return False
+
+
+def clear_input_field():
+    ''' Clear the currently selected input field '''
+
+    sleep(0.3)
+    keyboard.press_and_release('ctrl + a')
+    sleep(0.5)
+    keyboard.press_and_release('backspace')
