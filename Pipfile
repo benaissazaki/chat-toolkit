@@ -11,6 +11,7 @@ bs4 = "*"
 pyinstaller = "*"
 pywin32 = "*"
 pillow = "*"
+googletrans = "==4.0.0rc1"
 
 [dev-packages]
 pylint = "*"

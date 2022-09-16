@@ -5,7 +5,7 @@ import os
 import keyboard
 import pytube
 from moviepy.audio.io.AudioFileClip import AudioFileClip
-from helpers import keystrokes_to_string
+from helpers import keystrokes_to_string, clear_input_field
 from settings import Settings
 
 
@@ -49,10 +49,11 @@ def listen_audio():
     while True:
         try:
             keyboard.wait(launch_hotkey)
-            keyboard.press_and_release('backspace')
+            clear_input_field()
 
             print(f'Reading song title, press {submit_hotkey} to submit')
             keystrokes = keyboard.record(until=submit_hotkey)
+            clear_input_field()
             song_name = keystrokes_to_string(keystrokes)
 
             print(f"Searching for song: {song_name}")
