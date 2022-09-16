@@ -1,5 +1,6 @@
 ''' Downloads image then copy-pastes it '''
 
+import logging
 import os
 import random
 import shutil
@@ -10,20 +11,28 @@ from helpers import copy_image, keystrokes_to_string, clear_input_field
 from settings import Settings
 
 
-def get_and_copy_image(query: str, max_num: int = 5, max_offset: int = 20) -> str:
+def get_and_copy_image(query: str, max_offset: int = 20) -> str:
     ''' Downloads the image from @link and returns its filepath '''
 
     random_offset = random.randrange(0, max_offset + 1)
     destination_path = os.path.join('output', 'images')
-    crawler = GoogleImageCrawler(storage={'root_dir': destination_path})
+
     shutil.rmtree(destination_path)
-    crawler.crawl(query, max_num=max_num, offset=random_offset)
 
-    chosen_image_path = os.path.join(
-        destination_path, random.choice(os.listdir(destination_path)))
+    crawler = GoogleImageCrawler(
+        storage={'root_dir': destination_path}, log_level=logging.CRITICAL)
+    crawler.crawl(query, max_num=1, offset=random_offset,)
 
-    copy_image(chosen_image_path)
+    logging.info('Successfully downloaded image \'%s\'', query)
+
+    image_path = os.path.join(
+        destination_path,
+        os.listdir(destination_path)[0])
+
+    copy_image(image_path)
     keyboard.press_and_release('ctrl + v')
+
+    logging.info('Successfully copy-pasted image \'%s\'', query)
 
     shutil.rmtree(destination_path)
     Path(destination_path).mkdir(parents=True, exist_ok=True)
@@ -38,6 +47,7 @@ def listen_image():
         try:
             keyboard.wait(launch_hotkey)
             clear_input_field()
+            logging.info('Summoned Image')
 
             print(f'Reading image name, press {submit_hotkey} to submit')
             keystrokes = keyboard.record(until=submit_hotkey)
@@ -45,15 +55,12 @@ def listen_image():
             image_name = keystrokes_to_string(
                 keystrokes).replace(submit_hotkey, '')
 
-            print(f"Searching for image: {image_name}")
+            logging.info("Searching for image: '%s'", image_name)
 
             get_and_copy_image(image_name,
-                               Settings.get_setting('image.pool_size'),
                                Settings.get_setting('image.max_offset'))
-        except Exception as exception:                                                  # pylint: disable=broad-except
-            print(
-                f'Unidentified error in listen_image: {type(exception).__name__}')
-            print(exception)
+        except Exception:                                                       # pylint: disable=broad-except
+            logging.error("Exception occurred in Image", exc_info=True)
 
 
 if __name__ == '__main__':
