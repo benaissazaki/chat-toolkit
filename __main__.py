@@ -1,11 +1,12 @@
 ''' Launches all main loops in their own threads '''
 
+import logging
 import sys
 from threading import Thread
 from json import JSONDecodeError
 from pathlib import Path
 import keyboard
-from helpers import check_internet_access
+from helpers import check_internet_access, configure_logging
 from modules.image import listen_image
 from modules.audio import listen_audio
 from modules.lyrics import listen_lyrics
@@ -14,21 +15,23 @@ from modules.translate import listen_translate
 from settings import Settings
 
 if __name__ == '__main__':
+    configure_logging()
+
     if not check_internet_access():
-        print('No internet connection detected, program will close.')
+        logging.error('No internet connection detected, program will close.')
         sys.exit(1)
 
-    print('Creating output folder...')
+    logging.info('Creating output folder...')
     Path('output/audio').mkdir(parents=True, exist_ok=True)
     Path('output/images').mkdir(parents=True, exist_ok=True)
 
     try:
         Settings.load_settings()
-        print('Loading settings from settings.json\n')
+        logging.info('Loading settings from settings.json')
     except FileNotFoundError:
-        print('settings.json not found, will use default settings\n')
+        logging.warning('settings.json not found, will use default settings\n')
     except JSONDecodeError:
-        print('Cannot decode settings.json, will use default settings\n')
+        logging.warning('Cannot decode settings.json, will use default settings\n')
 
     IMAGE_HOTKEY = Settings.get_setting('image.launch_hotkey')
     AUDIO_HOTKEY = Settings.get_setting('audio.launch_hotkey')
@@ -57,4 +60,7 @@ if __name__ == '__main__':
     print(f'Press {TRANSLATE_HOTKEY} to send a translated message')
 
     print(f'\nThe systems are running.\nPress {EXIT_HOTKEY} to exit\n')
+    logging.info('Application started successfully')
+
     keyboard.wait(EXIT_HOTKEY)
+    logging.info('Application closed successfully')

@@ -1,9 +1,10 @@
 ''' Searches for song lyrics then types them in the keyboard '''
 
+import logging
 from time import sleep
+import requests
 import keyboard
 from bs4 import BeautifulSoup
-import requests
 from helpers import keystrokes_to_string, clear_input_field
 from settings import Settings
 
@@ -16,9 +17,8 @@ def get_lyrics_link(query: str) -> str:
             f"https://genius.com/api/search/multi?per_page=5&q={query}",
             timeout=Settings.get_setting('request_timeout')
         )
-
     except requests.exceptions.RequestException:
-        print('Cannot search lyrics from genius.com')
+        logging.error('Cannot search lyrics from genius.com', exc_info=True)
         return None
 
     search_results = list(response.json()['response']['sections'])
@@ -26,9 +26,10 @@ def get_lyrics_link(query: str) -> str:
         if result['type'] == 'song' and len(result['hits']) > 0:
             for hit in result['hits']:
                 if hit['type'] == 'song':
+                    logging.info('Found lyrics in \'%s\'', hit['result']['url'])
                     return hit['result']['url']
 
-    print('No lyrics found in genius.com')
+    logging.info('No lyrics found in genius.com for \'%s\'', query)
     return None
 
 
@@ -86,6 +87,7 @@ def listen_lyrics():
         try:
             keyboard.wait(launch_hotkey)
             clear_input_field()
+            logging.info('Summoned Lyrics')
 
             print(
                 f'Reading song title for lyrics, press {submit_hotkey} to submit')
@@ -94,7 +96,7 @@ def listen_lyrics():
             song_name = keystrokes_to_string(
                 keystrokes).replace(submit_hotkey, '')
 
-            print(f"Searching for song lyrics: {song_name}")
+            logging.info("Searching for image: '%s'", song_name)
             lyrics = get_lyrics(song_name)
 
             if lyrics is None:
@@ -105,10 +107,10 @@ def listen_lyrics():
                 keyboard.write(line)
                 keyboard.press_and_release('enter')
                 sleep(0.4)
-        except Exception as exception:                                                  # pylint: disable=broad-except
-            print(
-                f'Unidentified error in listen_lyrics: {type(exception).__name__}')
-            print(exception)
+
+            logging.info("Successfully typed the lyrics of '%s'", song_name)
+        except Exception:                                                  # pylint: disable=broad-except
+            logging.error("Exception occurred in Lyrics", exc_info=True)
 
 
 if __name__ == '__main__':
