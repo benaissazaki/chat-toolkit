@@ -11,25 +11,21 @@ from helpers import copy_image, keystrokes_to_string, clear_input_field
 from settings import Settings
 
 
-def get_and_copy_image(query: str, max_offset: int = 20) -> str:
+def get_and_copy_image(query: str, max_num: int = 5) -> str:
     ''' Downloads the image from @link and returns its filepath '''
 
-    random_offset = random.randrange(0, max_offset + 1)
+    # TODO: Find a better way to get a random image without downloading multiple ones
     destination_path = os.path.join('output', 'images')
-
+    crawler = GoogleImageCrawler(storage={'root_dir': destination_path})
     shutil.rmtree(destination_path)
-
-    crawler = GoogleImageCrawler(
-        storage={'root_dir': destination_path}, log_level=logging.CRITICAL)
-    crawler.crawl(query, max_num=1, offset=random_offset,)
+    crawler.crawl(query, max_num=max_num)
 
     logging.info('Successfully downloaded image \'%s\'', query)
 
-    image_path = os.path.join(
-        destination_path,
-        os.listdir(destination_path)[0])
+    chosen_image_path = os.path.join(
+        destination_path, random.choice(os.listdir(destination_path)))
 
-    copy_image(image_path)
+    copy_image(chosen_image_path)
     keyboard.press_and_release('ctrl + v')
 
     logging.info('Successfully copy-pasted image \'%s\'', query)
@@ -58,7 +54,7 @@ def listen_image():
             logging.info("Searching for image: '%s'", image_name)
 
             get_and_copy_image(image_name,
-                               Settings.get_setting('image.max_offset'))
+                               Settings.get_setting('image.pool_size'))
         except Exception:                                                       # pylint: disable=broad-except
             logging.error("Exception occurred in Image", exc_info=True)
 
