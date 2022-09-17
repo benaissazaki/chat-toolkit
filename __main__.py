@@ -15,23 +15,23 @@ from modules.translate import listen_translate
 from settings import Settings
 
 if __name__ == '__main__':
+    configure_logging()
+
     if not check_internet_access():
-        print('No internet connection detected, program will close.')
+        logging.error('No internet connection detected, program will close.')
         sys.exit(1)
 
-    print('Creating output folder...')
+    logging.info('Creating output folder...')
     Path('output/audio').mkdir(parents=True, exist_ok=True)
     Path('output/images').mkdir(parents=True, exist_ok=True)
 
     try:
         Settings.load_settings()
-        print('Loading settings from settings.json\n')
+        logging.info('Loading settings from settings.json')
     except FileNotFoundError:
-        print('settings.json not found, will use default settings\n')
+        logging.warning('settings.json not found, will use default settings\n')
     except JSONDecodeError:
-        print('Cannot decode settings.json, will use default settings\n')
-
-    configure_logging()
+        logging.warning('Cannot decode settings.json, will use default settings\n')
 
     IMAGE_HOTKEY = Settings.get_setting('image.launch_hotkey')
     AUDIO_HOTKEY = Settings.get_setting('audio.launch_hotkey')
