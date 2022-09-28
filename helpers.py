@@ -55,8 +55,8 @@ def copy_file(file: str):
 
 def keystrokes_to_string(keystrokes: List[keyboard.KeyboardEvent]) -> str:
     '''
-    Convert keystrokes to a string by simulating
-    what the actual output would be on an input box
+        Convert keystrokes to a string by simulating
+        what the actual output would be on an input box
     '''
 
     result = ''
@@ -81,8 +81,8 @@ def keystrokes_to_string(keystrokes: List[keyboard.KeyboardEvent]) -> str:
 
 def check_internet_access():
     '''
-    Send get request to google to check internet access
-    returns False if it raises a RequestException
+        Send get request to google to check internet access
+        returns False if it raises a RequestException
     '''
 
     try:

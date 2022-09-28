@@ -7,7 +7,7 @@ from settings import Settings
 from helpers import clear_input_field, keystrokes_to_string
 
 
-def translate(language, text):
+def translate(language: str, text: str) -> str:
     ''' Translate @text to @language '''
 
     translator = Translator()
@@ -23,6 +23,7 @@ def translate(language, text):
 def listen_translate():
     ''' Main infinite loop '''
 
+    # Load hotkeys from Settings
     launch_hotkey = Settings.get_setting('translate.launch_hotkey')
     submit_language_hotkey = Settings.get_setting(
         'translate.submit_language_hotkey')
@@ -34,20 +35,25 @@ def listen_translate():
             clear_input_field()
             logging.info('Summoned Translate')
 
+            # Asks for the language
             print(
-                f'Enter the destination language then press {submit_language_hotkey}')
+                f'Enter the destination language then press {submit_language_hotkey} '
+                '(ISO Language code e.g: en, fr, it)')
             keystrokes = keyboard.record(until=submit_language_hotkey)
             clear_input_field()
 
+            # Converts recorded keystrokes
             destination_language = keystrokes_to_string(
                 keystrokes).replace(submit_language_hotkey, '')
             logging.info('Destination language: \'%s\'', destination_language)
 
+            # Asks for the text to translate
             print(
                 f'Enter the message you wish to translate the press {submit_text_hotkey}')
             keystrokes = keyboard.record(until=submit_text_hotkey)
             clear_input_field()
 
+            # Convert recorded keystrokes
             text_to_translate = keystrokes_to_string(
                 keystrokes).replace(submit_text_hotkey, '')
             logging.info('Text to translate: \'%s\'', text_to_translate)
@@ -61,8 +67,3 @@ def listen_translate():
 
         except Exception:                                                  # pylint: disable=broad-except
             logging.error("Exception occurred in Translate", exc_info=True)
-
-
-if __name__ == '__main__':
-    Settings.load_settings()
-    listen_translate()
