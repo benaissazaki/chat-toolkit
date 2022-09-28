@@ -39,7 +39,7 @@ class Settings():
 
     @staticmethod
     def load_settings():
-        ''' Load settings from settings.json file '''
+        ''' Load settings from settings.json file into settings_dict '''
 
         with open('settings.json', 'r', encoding='utf-8') as settings_file:
             Settings.settings_dict = json.load(settings_file)
@@ -48,7 +48,7 @@ class Settings():
     def get_setting(setting: str):
         '''
             Gets a setting from the dict or returns the default value.
-                @setting is in the form "key.key.key" e.g: image.apikey
+                @setting is in the form "key.key.key..." e.g: image.submit_hotkey
         '''
         setting = setting.split('.')
         result = Settings.settings_dict

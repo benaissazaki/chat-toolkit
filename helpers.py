@@ -14,7 +14,7 @@ from win32 import win32clipboard
 from settings import Settings
 
 
-def copy_image(file: str):
+def copy_image(file: str) -> bool:
     ''' Copy image to the clipboard as bytes (Windows only) '''
 
     try:
@@ -32,9 +32,8 @@ def copy_image(file: str):
         # pylint: enable=c-extension-no-member
 
         return True
-    except Exception as exception:                                                   # pylint: disable=broad-except
-        print('Couldnt copy image to clipboard')
-        print(exception)
+    except Exception:                                                       # pylint: disable=broad-except
+        logging.error('Couldnt copy image to clipboard', exc_info=True)
         return False
 
 
@@ -48,12 +47,17 @@ def copy_file(file: str):
                        shell=True, check=True)  # windows specific
         return True
     except subprocess.CalledProcessError:
-        print(f'Cannot copy file {file} to clipboard')
+        logging.error('Cannot copy file \'%s\' to clipboard',
+                      file,
+                      exc_info=True)
         return False
 
 
 def keystrokes_to_string(keystrokes: List[keyboard.KeyboardEvent]) -> str:
-    ''' Convert keystrokes to a string '''
+    '''
+    Convert keystrokes to a string by simulating
+    what the actual output would be on an input box
+    '''
 
     result = ''
     cursor = 0
@@ -76,7 +80,10 @@ def keystrokes_to_string(keystrokes: List[keyboard.KeyboardEvent]) -> str:
 
 
 def check_internet_access():
-    ''' Send get request to google to check internet access '''
+    '''
+    Send get request to google to check internet access
+    returns False if it raises a RequestException
+    '''
 
     try:
         requests.get('https://www.google.com',
@@ -87,7 +94,7 @@ def check_internet_access():
 
 
 def clear_input_field():
-    ''' Clear the currently selected input field '''
+    ''' Clear the active input field '''
 
     sleep(0.3)
     keyboard.press_and_release('ctrl + a')
@@ -102,5 +109,10 @@ def configure_logging():
     log_filename = Settings.get_setting('log_filename')
     log_format = Settings.get_setting('log_format')
 
-    logging.basicConfig(level=logging_level, filename=log_filename, filemode='a', format=log_format)
+    logging.basicConfig(level=logging_level,
+                        filename=log_filename,
+                        filemode='a',
+                        format=log_format)
+
+    # Log into stdout in addition to the log file
     logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))

@@ -1,4 +1,4 @@
-''' Launches all main loops in their own threads '''
+''' Launches the application '''
 
 import logging
 import sys
@@ -21,6 +21,7 @@ if __name__ == '__main__':
         logging.error('No internet connection detected, program will close.')
         sys.exit(1)
 
+    # Create folders to store eventual output files
     logging.info('Creating output folder...')
     Path('output/audio').mkdir(parents=True, exist_ok=True)
     Path('output/images').mkdir(parents=True, exist_ok=True)
@@ -33,20 +34,22 @@ if __name__ == '__main__':
     except JSONDecodeError:
         logging.warning('Cannot decode settings.json, will use default settings\n')
 
+    # Load hotkeys from settings
     IMAGE_HOTKEY = Settings.get_setting('image.launch_hotkey')
     AUDIO_HOTKEY = Settings.get_setting('audio.launch_hotkey')
     LYRICS_HOTKEY = Settings.get_setting('lyrics.launch_hotkey')
     JOKES_HOTKEY = Settings.get_setting('jokes.launch_hotkey')
     TRANSLATE_HOTKEY = Settings.get_setting('translate.launch_hotkey')
-
     EXIT_HOTKEY = Settings.get_setting('exit_hotkey')
 
+    # Create a Thread for each module
     image_thread = Thread(target=listen_image, daemon=True)
     audio_thread = Thread(target=listen_audio, daemon=True)
     lyrics_thread = Thread(target=listen_lyrics, daemon=True)
     jokes_thread = Thread(target=listen_jokes, daemon=True)
     translate_thread = Thread(target=listen_translate, daemon=True)
 
+    # Launch Threads
     image_thread.start()
     audio_thread.start()
     lyrics_thread.start()
@@ -58,9 +61,9 @@ if __name__ == '__main__':
     print(f'Press {LYRICS_HOTKEY} to search and send a song\'s lyrics')
     print(f'Press {JOKES_HOTKEY} to send a random joke')
     print(f'Press {TRANSLATE_HOTKEY} to send a translated message')
-
     print(f'\nThe systems are running.\nPress {EXIT_HOTKEY} to exit\n')
     logging.info('Application started successfully')
 
+    # Wait for EXIT_HOTKEY to be pressed in order to close
     keyboard.wait(EXIT_HOTKEY)
     logging.info('Application closed successfully')
