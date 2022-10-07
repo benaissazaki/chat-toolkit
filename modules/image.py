@@ -17,20 +17,22 @@ def get_and_copy_image(query: str, max_num: int = 5) -> str:
     # TODO: Find a better way to get a random image without downloading multiple ones
     destination_path = os.path.join('output', 'images')
     crawler = GoogleImageCrawler(storage={'root_dir': destination_path})
-    shutil.rmtree(destination_path)
-    crawler.crawl(query, max_num=max_num)
+
+    shutil.rmtree(destination_path)         # Remove destination folder if it exists
+
+    crawler.crawl(query, max_num=max_num)   # Download max_num number of images
 
     logging.info('Successfully downloaded image \'%s\'', query)
 
     chosen_image_path = os.path.join(
-        destination_path, random.choice(os.listdir(destination_path)))
+        destination_path, random.choice(os.listdir(destination_path)))      # Choose a random image among the downloaded ones
 
-    copy_image(chosen_image_path)
+    copy_image(chosen_image_path)           # Copy and paste the chosen image
     keyboard.press_and_release('ctrl + v')
 
     logging.info('Successfully copy-pasted image \'%s\'', query)
 
-    shutil.rmtree(destination_path)
+    shutil.rmtree(destination_path)                             # Remove and recreate destination folder
     Path(destination_path).mkdir(parents=True, exist_ok=True)
 
 
@@ -45,6 +47,7 @@ def listen_image():
             clear_input_field()
             logging.info('Summoned Image')
 
+            # Asks for the image search query
             print(f'Reading image name, press {submit_hotkey} to submit')
             keystrokes = keyboard.record(until=submit_hotkey)
             clear_input_field()
@@ -53,6 +56,7 @@ def listen_image():
 
             logging.info("Searching for image: '%s'", image_name)
 
+            # Download the image and copy paste it
             get_and_copy_image(image_name,
                                Settings.get_setting('image.pool_size'))
         except Exception:                                                       # pylint: disable=broad-except
