@@ -10,7 +10,7 @@ from settings import Settings
 
 
 def get_lyrics_link(query: str) -> str:
-    ''' Get links to the @query song Genius lyrics page (takes first search result) '''
+    ''' Get links to the @query song's Genius lyrics page (takes first search result) '''
 
     try:
         response = requests.get(
@@ -29,48 +29,58 @@ def get_lyrics_link(query: str) -> str:
                     logging.info('Found lyrics in \'%s\'', hit['result']['url'])
                     return hit['result']['url']
 
+    # If no result is found
     logging.info('No lyrics found in genius.com for \'%s\'', query)
     return None
 
 
-def get_lyrics(query: str):
+def get_lyrics(query: str) -> str:
     ''' Get lyrics to @query song '''
 
-    link = get_lyrics_link(query)
-    if link is None:
+    link_to_lyrics = get_lyrics_link(query)
+    if link_to_lyrics is None:
         return None
 
     try:
-        page = requests.get(link, timeout=Settings.get_setting('request_timeout')) \
+        # Get lyrics page end remove <b> and <i> tags often present in lyrics themselves
+        page = requests.get(link_to_lyrics, timeout=Settings.get_setting('request_timeout')) \
             .text.replace('<i>', '') \
             .replace('</i>', '').replace('<b>', '').replace('</b>', '')
-
     except requests.exceptions.RequestException:
-        print(f'Cannot get lyrics page {link}')
+        print(f'Cannot get lyrics page {link_to_lyrics}')
         return None
 
     soup = BeautifulSoup(page, 'html.parser')
 
+    # Parse page to find lyrics
     raw_lyrics = soup.findAll('div', {'data-lyrics-container': 'true'})
     if len(raw_lyrics) == 0:
         print('Cannot parse lyrics page')
         return None
     raw_lyrics = "".join([s.get_text('\n') for s in raw_lyrics])
+    cleaned_lyrics = clean_raw_lyrics(raw_lyrics)
+
+    return cleaned_lyrics
+
+def clean_raw_lyrics(raw_lyrics: str) -> str:
+    ''' Nicely format raw_lyrics '''
 
     cleaned_lyrics = ''
-    delete_mode = False
+    delete_linebreak_mode = False
 
     for character in raw_lyrics:
         if character == '[' and len(cleaned_lyrics) != 0 and cleaned_lyrics[-1] != '\n':
+            # Add linebreak before '[' if it isn't there already
             cleaned_lyrics += '\n'
 
         if character in ['[', '(']:
-            delete_mode = True
+            delete_linebreak_mode = True
 
         if character in [']', ')']:
-            delete_mode = False
+            delete_linebreak_mode = False
 
-        if (character == '\n' and delete_mode):
+        if (character == '\n' and delete_linebreak_mode):
+            # Delete linebreaks between '()' and '[]'
             continue
 
         cleaned_lyrics += character
@@ -81,14 +91,17 @@ def get_lyrics(query: str):
 def listen_lyrics():
     ''' Main infinite loop '''
 
+    # Load hotkeys from Settings
     launch_hotkey = Settings.get_setting('lyrics.launch_hotkey')
     submit_hotkey = Settings.get_setting('lyrics.submit_hotkey')
+
     while True:
         try:
             keyboard.wait(launch_hotkey)
             clear_input_field()
             logging.info('Summoned Lyrics')
 
+            # Asks for the song title
             print(
                 f'Reading song title for lyrics, press {submit_hotkey} to submit')
             keystrokes = keyboard.record(until=submit_hotkey)
@@ -98,10 +111,10 @@ def listen_lyrics():
 
             logging.info("Searching for image: '%s'", song_name)
             lyrics = get_lyrics(song_name)
-
             if lyrics is None:
                 continue
 
+            # Type each line
             lyrics = lyrics.split('\n')
             for line in lyrics:
                 keyboard.write(line)
