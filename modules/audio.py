@@ -14,9 +14,14 @@ def mp4_to_mp3(filename, output_path):
     ''' Convert mp4 video to mp3 audio '''
 
     try:
+        # Open the mp4 video's audio track
         video = AudioFileClip(filename)
+
+        # Save video's audio track as mp3
         video.write_audiofile(output_path)
         video.close()
+
+        # Remove mp4 video
         os.remove(filename)
         return output_path
 
@@ -32,6 +37,7 @@ def download_audio(query):
     ''' Download first video matching @query then converts it to mp3 '''
 
     try:
+        # Download first youtube result and save it as tmp.mp4
         first_result: pytube.YouTube = pytube.Search(query).results[0]
         first_result.streams.filter(type='audio')[0].download(
             output_path=os.path.join('output', 'audio'), filename='tmp.mp4')
@@ -56,6 +62,8 @@ def listen_audio():
             clear_input_field()
             logging.info('Summoned Audio')
 
+
+            # Asks for song title
             print(f'Reading song title, press {submit_hotkey} to submit')
             keystrokes = keyboard.record(until=submit_hotkey)
             clear_input_field()
@@ -70,6 +78,8 @@ def listen_audio():
                              song_name,
                              audio_filepath)
                 path = os.path.abspath(audio_filepath)
+
+                # Open the folder containing the downloaded audio in file explorer
                 subprocess.run(
                     f'explorer /select, "{path}"', check=False)
 

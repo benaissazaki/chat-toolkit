@@ -24,15 +24,17 @@ def get_and_copy_image(query: str, max_num: int = 5) -> str:
 
     logging.info('Successfully downloaded image \'%s\'', query)
 
+    # Choose a random image among the downloaded ones
     chosen_image_path = os.path.join(
-        destination_path, random.choice(os.listdir(destination_path)))      # Choose a random image among the downloaded ones
+        destination_path, random.choice(os.listdir(destination_path)))    
 
     copy_image(chosen_image_path)           # Copy and paste the chosen image
     keyboard.press_and_release('ctrl + v')
 
     logging.info('Successfully copy-pasted image \'%s\'', query)
 
-    shutil.rmtree(destination_path)                             # Remove and recreate destination folder
+    # Remove and recreate destination folder
+    shutil.rmtree(destination_path)
     Path(destination_path).mkdir(parents=True, exist_ok=True)
 
 
